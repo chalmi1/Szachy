@@ -50,7 +50,6 @@ void Game::ComposeFrame()
 			if ((a + i) % 2 == 0)
 				brd.drawCell(a, i, Colors::White, gfx);
 			else
-				brd.drawCell(a, i, Colors::Black, gfx);
+				brd.drawCell(a, i, Colors::MakeRGB(153, 100, 0), gfx);
 		}
-			
 }

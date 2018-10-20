@@ -3,9 +3,9 @@
 class Board
 {
 private:
-	int width;
-	int height;
-	int cellSize; // 75x75
+	int width;	//480
+	int height;	//480
+	int cellSize; // 60x60
 	int placex;
 	int placey;
 public:
