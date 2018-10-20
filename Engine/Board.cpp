@@ -374,9 +374,9 @@ void Board::drawBorder(Graphics & gfx) const
 
 Board::Board(Graphics & gfx)
 {
-	width = 560;
-	height = 560;
-	cellSize = 70;
+	width = 520;
+	height = 520;
+	cellSize = 65;
 	placex = (gfx.ScreenWidth - width)/2;
 	placey = (gfx.ScreenHeight - height)/2;
 }
