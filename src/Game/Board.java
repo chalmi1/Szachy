@@ -5,49 +5,112 @@ import Pieces.Rook;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class Board extends JPanel {
-    private Tile[][] tiles = new Tile[8][8];
-    Board() {
+    private Tile[][] tile = new Tile[8][8];
+    private Piece grabbedPiece = null;
+    private String firstClickCoords = "";
+    private Game game;
+    private Point LastMoveFrom = null;
+    private Point LastMoveTo = null;
+
+    Board(Game g) {
+        game = g;
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 String coords = ""+((char)('a'+ col))+(8-row);
                 if ((row+col)%2 == 0)
-                    tiles[row][col] = new Tile(coords, Tile.ColorEnum.white);
+                    tile[row][col] = new Tile(coords, Tile.ColorEnum.white);
                 else
-                    tiles[row][col] = new Tile(coords, Tile.ColorEnum.black);
+                    tile[row][col] = new Tile(coords, Tile.ColorEnum.black);
             }
         }
         populate();
         ShowTextBoard();
+        addMouseListener(new MouseAdapter() {
+            Point coords;
+            @Override
+            public void mousePressed(MouseEvent e) {
+                coords = getTileIndex(e.getPoint());
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                Point coords2 = getTileIndex(e.getPoint());
+                if (coords.equals(coords2)) { // kursor nie opuscil pola)
+                    if (game.getTurnProgress() == 0 &&
+                            tile[coords.y][coords.x].firstClick(game)) {
+                        game.notifyClick(1);
+                        grabbedPiece = tile[coords.y][coords.x].getPiece();
+                        firstClickCoords = tile[coords.y][coords.x].getChCoords();
+                        repaint();
+                    }
+                    else if (game.getTurnProgress() == 1 &&
+                            tile[coords.y][coords.x].secondClick(grabbedPiece, firstClickCoords)) {
+                        Point first = getTileIndex(firstClickCoords);
+                        tile[first.y][first.x].removePiece();
+                        if (LastMoveFrom != null)
+                            tile[LastMoveFrom.y][LastMoveFrom.x].click();
+                        LastMoveFrom = first;
+                        tile[coords.y][coords.x].placePiece(grabbedPiece);
+                        if (LastMoveTo != null)
+                            tile[LastMoveTo.y][LastMoveTo.x].click();
+                        LastMoveTo = coords;
+                        game.notifyClick(2);
+
+                        grabbedPiece = null;
+                        firstClickCoords = "";
+                        repaint();
+                    }
+                }
+            }
+        });
     }
 
     public void paint(Graphics g) {
         for (int col = 0; col < 8; col++) {
             for (int row = 0; row < 8; row++) {
-                tiles[row][col].draw(g);
+                tile[row][col].draw(g);
             }
         }
     }
 
     private void populate() {
-        tiles[0][0].placePiece(new Rook(Piece.Color.black));
-        tiles[0][7].placePiece(new Rook(Piece.Color.black));
-        tiles[7][0].placePiece(new Rook(Piece.Color.white));
-        tiles[7][7].placePiece(new Rook(Piece.Color.white));
+        tile[0][0].placePiece(new Rook(Piece.Color.black));
+        tile[0][7].placePiece(new Rook(Piece.Color.black));
+        tile[7][0].placePiece(new Rook(Piece.Color.white));
+        tile[7][7].placePiece(new Rook(Piece.Color.white));
     }
 
     private void ShowTextBoard() {
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
-                if (tiles[row][col].piece != null)
-                System.out.print(tiles[row][col].piece.getSymbol()+tiles[row][col].ChCoords+" ");
+                if (tile[row][col].getPiece() != null)
+                System.out.print(tile[row][col].getPiece().getSymbol()+" ");
                 else
-                    System.out.print("-"+tiles[row][col].ChCoords+" ");
+                    System.out.print("- ");
 
 
             }
             System.out.print("\n");
         }
+    }
+
+    private Point getTileIndex(Point p) {
+        return new Point(p.x/Tile.dimension, p.y/Tile.dimension);
+    }
+
+    private Point getTileIndex(String coords) {
+        Point index = new Point();
+        char chx = coords.charAt(0);
+        int x = (int)chx - (int)'a';
+        char chy = coords.charAt(1);
+        int y = Integer.parseInt(""+chy);
+        y = Math.abs(8-y);
+        index.x = x;
+        index.y = y;
+        return index;
     }
 }

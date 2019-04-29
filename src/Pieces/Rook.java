@@ -20,7 +20,16 @@ public class Rook extends Piece {
     }
 
     @Override
-    protected void checkMove() {
+    public boolean isLegal(String start, String destination) {
+        if (start.equals(destination))
+            return false;
+        char stx = start.charAt(0);
+        char sty = start.charAt(1);
+        char dex = destination.charAt(0);
+        char dey = destination.charAt(1);
 
+        if (stx == dex)
+            return true;
+        return sty == dey;
     }
 }

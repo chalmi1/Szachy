@@ -1,22 +1,23 @@
 package Game;
 
+import Pieces.Piece;
+
 import java.awt.*;
 
 public class Tile {
 
-    String ChCoords;  // koordynaty szachowe np a5, b3 itd.
-    private int[] IntCoords = new int[2];    // koordynaty tablicowe
+    private String ChCoords;  // koordynaty szachowe np a5, b3 itd.
+    private Point IntCoords = new Point();    // koordynaty tablicowe
     public final static int dimension = 75;   // wymiar boku kazdego pola
     private static int[] boardOffset = new int[2];
-    public enum ColorEnum {black, white}
-    private ColorEnum tileColorEnum;
-    private Color tileColor;
+    public enum ColorEnum {black, white, blackSelected, whiteSelected}
+    private ColorEnum color;
+    private Color colorRGB;
     private boolean occupied = false;
-    Pieces.Piece piece = null;
+    private Pieces.Piece piece = null;
 
     Tile(String coords, ColorEnum color) {
-        tileColorEnum = color;
-        convertEnumToColor();
+        changeColor(color);
         ChCoords = coords;
         convertPosToIndexed();
         boardOffset[0] = 0;
@@ -25,14 +26,14 @@ public class Tile {
     public boolean isOccupied() { return occupied; }
 
     void draw(Graphics g) {
-        g.setColor(tileColor);
-        int x = IntCoords[0]*dimension+boardOffset[0];
-        int y = IntCoords[1]*dimension+boardOffset[1];
+        g.setColor(colorRGB);
+        int x = IntCoords.x*dimension+boardOffset[0];
+        int y = IntCoords.y*dimension+boardOffset[1];
         g.fillRect(x, y, dimension, dimension);
 
         if (piece != null) {
-            int[] offset = piece.getTileOffset();
-            piece.draw(g, x + offset[0], y + offset[1]);
+            Point offset = piece.getTileOffset();
+            piece.draw(g, x + offset.x, y + offset.y);
         }
     }
 
@@ -42,18 +43,99 @@ public class Tile {
         char chy = ChCoords.charAt(1);
         int y = Integer.parseInt(""+chy);
         y = Math.abs(8-y);
-        IntCoords[0] = x;
-        IntCoords[1] = y;
+        IntCoords.x = x;
+        IntCoords.y = y;
     }
 
-    private void convertEnumToColor() {
-        if (tileColorEnum == ColorEnum.black)
-            tileColor = new Color(156, 97, 41);
-        else
-            tileColor = new Color(255, 209, 169);
+    private void changeColor(ColorEnum tileColorEnum) {
+        color = tileColorEnum;
+        switch (tileColorEnum) {
+            case black:
+                colorRGB = new Color(156, 97, 41);
+                break;
+            case white:
+                colorRGB = new Color(255, 209, 169);
+                break;
+            case blackSelected:
+                colorRGB = new Color(156, 156, 0);
+                break;
+            case whiteSelected:
+                colorRGB = new Color(254, 255, 0);
+                break;
+        }
+
     }
 
     void placePiece(Pieces.Piece piece) {
         this.piece = piece;
     }
+
+    void removePiece() {
+        this.piece = null;
+    }
+
+    void click() {
+        switch (color)
+        {
+            case black:
+                changeColor(ColorEnum.blackSelected);
+                break;
+            case white:
+                changeColor(ColorEnum.whiteSelected);
+                break;
+            case blackSelected:
+                changeColor(ColorEnum.black);
+                break;
+            case whiteSelected:
+                changeColor(ColorEnum.white);
+                break;
+        }
+    }
+
+    boolean firstClick(Game game) {
+        if (game.getTurn()==Player.Color.white)
+        {
+            if (piece != null &&
+                    piece.getColor() == Piece.Color.white)
+            {
+                click();
+                return true;
+            }
+            else return false;
+        }
+        else if (game.getTurn()==Player.Color.black)
+        {
+            if (piece != null &&
+                    piece.getColor() == Piece.Color.black)
+            {
+                click();
+                return true;
+            }
+            else return false;
+        }
+        return false;
+    }
+
+    boolean secondClick(Piece grabbedPiece, String beginning) {
+        if (grabbedPiece.isLegal(beginning, ChCoords))
+        {
+            click();
+            return true;
+        }
+        else
+            return false;
+    }
+
+    Piece getPiece() {
+        return piece;
+    }
+
+    String getChCoords() {
+        return ChCoords;
+    }
+
+    public Point getIntCoords() {
+        return IntCoords;
+    }
+
 }
