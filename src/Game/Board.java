@@ -9,9 +9,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class Board extends JPanel {
-    private Tile[][] tile = new Tile[8][8];
+    public Tile[][] tile = new Tile[8][8];
     private Piece grabbedPiece = null;
-    private String firstClickCoords = "";
+    private Point firstClickCoords = null;
     private Game game;
     private Point LastMoveFrom = null;
     private Point LastMoveTo = null;
@@ -44,16 +44,15 @@ public class Board extends JPanel {
                             tile[coords.y][coords.x].firstClick(game)) {
                         game.notifyClick(1);
                         grabbedPiece = tile[coords.y][coords.x].getPiece();
-                        firstClickCoords = tile[coords.y][coords.x].getChCoords();
+                        firstClickCoords = coords;
                         repaint();
                     }
                     else if (game.getTurnProgress() == 1 &&
-                            tile[coords.y][coords.x].secondClick(grabbedPiece, firstClickCoords)) {
-                        Point first = getTileIndex(firstClickCoords);
-                        tile[first.y][first.x].removePiece();
+                            tile[coords.y][coords.x].secondClick(grabbedPiece, firstClickCoords, game.getBrd())) {
+                        tile[firstClickCoords.y][firstClickCoords.x].removePiece();
                         if (LastMoveFrom != null)
                             tile[LastMoveFrom.y][LastMoveFrom.x].click();
-                        LastMoveFrom = first;
+                        LastMoveFrom = firstClickCoords;
                         tile[coords.y][coords.x].placePiece(grabbedPiece);
                         if (LastMoveTo != null)
                             tile[LastMoveTo.y][LastMoveTo.x].click();
@@ -61,7 +60,7 @@ public class Board extends JPanel {
                         game.notifyClick(2);
 
                         grabbedPiece = null;
-                        firstClickCoords = "";
+                        firstClickCoords = null;
                         repaint();
                     }
                 }

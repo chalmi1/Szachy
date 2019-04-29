@@ -1,8 +1,12 @@
 package Pieces;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+
+import static java.lang.Integer.max;
+import static java.lang.Integer.min;
 
 public class Rook extends Piece {
 
@@ -20,16 +24,36 @@ public class Rook extends Piece {
     }
 
     @Override
-    public boolean isLegal(String start, String destination) {
-        if (start.equals(destination))
+    public boolean isLegal(Point start, Point destination, Game.Board brd) {
+        if (start.equals(destination))  // nie można zrobić ruchu w miejscu
             return false;
-        char stx = start.charAt(0);
-        char sty = start.charAt(1);
-        char dex = destination.charAt(0);
-        char dey = destination.charAt(1);
+        int stcol = start.x;
+        int strow = start.y;
+        int decol = destination.x;
+        int derow = destination.y;
 
-        if (stx == dex)
+        if (brd.tile[derow][decol].isOccupied() &&  // nie można zbić bierki własnego koloru
+                brd.tile[derow][decol].getPiece().color == brd.tile[strow][stcol].getPiece().color)
+            return false;
+
+        if (stcol == decol)
+        {
+            for (int i = min(strow, derow)+1; i < max(strow, derow); i++) {  // badanie czy między startem a końcem nie ma bierek
+            if (brd.tile[i][stcol].isOccupied())
+                return false;
+            }
             return true;
-        return sty == dey;
+        }
+
+        if (strow == derow)
+        {
+            for (int i = min(stcol, decol)+1; i < max(stcol, decol); i++) {  // badanie czy między startem a końcem nie ma bierek
+                if (brd.tile[strow][i].isOccupied())
+                    return false;
+            }
+            return true;
+        }
+
+        return false;
     }
 }

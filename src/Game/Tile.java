@@ -9,7 +9,7 @@ public class Tile {
     private String ChCoords;  // koordynaty szachowe np a5, b3 itd.
     private Point IntCoords = new Point();    // koordynaty tablicowe
     public final static int dimension = 75;   // wymiar boku kazdego pola
-    private static int[] boardOffset = new int[2];
+    private static Point boardOffset = new Point();
     public enum ColorEnum {black, white, blackSelected, whiteSelected}
     private ColorEnum color;
     private Color colorRGB;
@@ -20,15 +20,15 @@ public class Tile {
         changeColor(color);
         ChCoords = coords;
         convertPosToIndexed();
-        boardOffset[0] = 0;
-        boardOffset[1] = 0;
+        boardOffset.x = 0;
+        boardOffset.y = 0;
     }
     public boolean isOccupied() { return occupied; }
 
     void draw(Graphics g) {
         g.setColor(colorRGB);
-        int x = IntCoords.x*dimension+boardOffset[0];
-        int y = IntCoords.y*dimension+boardOffset[1];
+        int x = IntCoords.x*dimension+boardOffset.x;
+        int y = IntCoords.y*dimension+boardOffset.y;
         g.fillRect(x, y, dimension, dimension);
 
         if (piece != null) {
@@ -68,10 +68,12 @@ public class Tile {
 
     void placePiece(Pieces.Piece piece) {
         this.piece = piece;
+        occupied = true;
     }
 
     void removePiece() {
         this.piece = null;
+        occupied = false;
     }
 
     void click() {
@@ -116,8 +118,8 @@ public class Tile {
         return false;
     }
 
-    boolean secondClick(Piece grabbedPiece, String beginning) {
-        if (grabbedPiece.isLegal(beginning, ChCoords))
+    boolean secondClick(Piece grabbedPiece, Point beginning, Board brd) {
+        if (grabbedPiece.isLegal(beginning, IntCoords, brd))
         {
             click();
             return true;
@@ -126,7 +128,7 @@ public class Tile {
             return false;
     }
 
-    Piece getPiece() {
+    public Piece getPiece() {
         return piece;
     }
 
