@@ -11,6 +11,8 @@ import static java.lang.Integer.max;
 import static java.lang.Integer.min;
 
 public class King extends Piece {
+    private boolean moved = false;
+
     public King(Color c) {
         super('K', c);
         color = c;
@@ -41,6 +43,30 @@ public class King extends Piece {
                 }
             }
         }
+
+        if (!moved) { // ROSZADA
+            if (color == Color.white) {
+                if (destination.equals(new Point(6,7)) ||
+                    destination.equals(new Point(7,7))) {   // krótka roszada białego
+                    if (brd.tile[7][5].isOccupied() || brd.tile[7][6].isOccupied())
+                        return false;
+                    if (brd.tile[7][7].getPiece().getSymbol() == 'W') {
+                        Rook rk = (Rook)brd.tile[7][7].getPiece();
+                        if (!rk.hasMoved()) {
+                            destination.x = 6;
+                            brd.tile[7][7].removePiece();
+                            brd.tile[7][5].placePiece(rk);
+                            rk.moved();
+                            moved = true;
+                            return true;
+                        }
+                        else return false;
+                    }
+
+                }
+            }
+        }
+
 
         return false;
     }

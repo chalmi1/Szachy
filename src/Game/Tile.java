@@ -66,12 +66,12 @@ public class Tile {
 
     }
 
-    void placePiece(Pieces.Piece piece) {
+    public void placePiece(Pieces.Piece piece) {
         this.piece = piece;
         occupied = true;
     }
 
-    void removePiece() {
+    public void removePiece() {
         this.piece = null;
         occupied = false;
     }

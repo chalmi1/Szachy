@@ -10,6 +10,7 @@ import static java.lang.Integer.min;
 
 public class Rook extends Piece {
 
+    private boolean moved = false;
     public Rook(Color c) {
         super('W', c);
         color = c;
@@ -55,5 +56,13 @@ public class Rook extends Piece {
         }
 
         return false;
+    }
+
+    boolean hasMoved() {
+        return moved;
+    }
+
+    void moved() {
+        this.moved = true;
     }
 }
