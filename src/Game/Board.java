@@ -76,15 +76,22 @@ public class Board extends JPanel {
     }
 
     private void populate() {
+        // Wieże
         tile[0][0].placePiece(new Rook(Piece.Color.black));
         tile[0][7].placePiece(new Rook(Piece.Color.black));
         tile[7][0].placePiece(new Rook(Piece.Color.white));
         tile[7][7].placePiece(new Rook(Piece.Color.white));
-
+        // Gońce
         tile[0][2].placePiece(new Bishop(Piece.Color.black));
         tile[0][5].placePiece(new Bishop(Piece.Color.black));
         tile[7][2].placePiece(new Bishop(Piece.Color.white));
         tile[7][5].placePiece(new Bishop(Piece.Color.white));
+        // Hetmany
+        tile[0][3].placePiece(new Queen(Piece.Color.black));
+        tile[7][3].placePiece(new Queen(Piece.Color.white));
+        // Królowie
+        tile[0][4].placePiece(new King(Piece.Color.black));
+        tile[7][4].placePiece(new King(Piece.Color.white));
     }
 
     private void ShowTextBoard() {

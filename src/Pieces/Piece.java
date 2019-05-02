@@ -14,6 +14,8 @@ public abstract class Piece{
     Piece(char symbol, Color color) {
         this.symbol = symbol;
         this.color = color;
+        if (color == Color.black)
+            this.symbol += 32;
     }
     public abstract boolean isLegal(Point start, Point destination, Game.Board brd);
     public void draw(Graphics g, int x, int y) {
