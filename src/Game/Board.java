@@ -1,7 +1,6 @@
 package Game;
 
-import Pieces.Piece;
-import Pieces.Rook;
+import Pieces.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -81,6 +80,11 @@ public class Board extends JPanel {
         tile[0][7].placePiece(new Rook(Piece.Color.black));
         tile[7][0].placePiece(new Rook(Piece.Color.white));
         tile[7][7].placePiece(new Rook(Piece.Color.white));
+
+        tile[0][2].placePiece(new Bishop(Piece.Color.black));
+        tile[0][5].placePiece(new Bishop(Piece.Color.black));
+        tile[7][2].placePiece(new Bishop(Piece.Color.white));
+        tile[7][5].placePiece(new Bishop(Piece.Color.white));
     }
 
     private void ShowTextBoard() {
