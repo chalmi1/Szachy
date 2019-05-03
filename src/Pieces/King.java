@@ -46,14 +46,12 @@ public class King extends Piece {
 
         if (!moved) { // ROSZADA
             if (color == Color.white) {
-                if (destination.equals(new Point(6,7)) ||
-                    destination.equals(new Point(7,7))) {   // krótka roszada białego
+                if (destination.equals(new Point(6,7))) {   // krótka roszada białego
                     if (brd.tile[7][5].isOccupied() || brd.tile[7][6].isOccupied())
                         return false;
                     if (brd.tile[7][7].getPiece().getSymbol() == 'W') {
                         Rook rk = (Rook)brd.tile[7][7].getPiece();
                         if (!rk.hasMoved()) {
-                            destination.x = 6;
                             brd.tile[7][7].removePiece();
                             brd.tile[7][5].placePiece(rk);
                             rk.moved();
@@ -62,7 +60,53 @@ public class King extends Piece {
                         }
                         else return false;
                     }
-
+                }
+                else if (destination.equals(new Point(2, 7))) { // długa roszada białego
+                    if (brd.tile[7][3].isOccupied() || brd.tile[7][2].isOccupied())
+                        return false;
+                    if (brd.tile[7][0].getPiece().getSymbol() == 'W') {
+                        Rook rk = (Rook)brd.tile[7][0].getPiece();
+                        if (!rk.hasMoved()) {
+                            brd.tile[7][0].removePiece();
+                            brd.tile[7][3].placePiece(rk);
+                            rk.moved();
+                            moved = true;
+                            return true;
+                        }
+                        else return false;
+                    }
+                }
+            }
+            else if (color == Color.black) {
+                if (destination.equals(new Point(6,0))) {   // krótka roszada czarnego
+                    if (brd.tile[0][5].isOccupied() || brd.tile[0][6].isOccupied())
+                        return false;
+                    if (brd.tile[0][7].getPiece().getSymbol() == 'w') {
+                        Rook rk = (Rook)brd.tile[0][7].getPiece();
+                        if (!rk.hasMoved()) {
+                            brd.tile[0][7].removePiece();
+                            brd.tile[0][5].placePiece(rk);
+                            rk.moved();
+                            moved = true;
+                            return true;
+                        }
+                        else return false;
+                    }
+                }
+                else if (destination.equals(new Point(2, 0))) { // długa roszada czarnego
+                    if (brd.tile[0][3].isOccupied() || brd.tile[0][2].isOccupied())
+                        return false;
+                    if (brd.tile[0][0].getPiece().getSymbol() == 'w') {
+                        Rook rk = (Rook)brd.tile[0][0].getPiece();
+                        if (!rk.hasMoved()) {
+                            brd.tile[0][0].removePiece();
+                            brd.tile[0][3].placePiece(rk);
+                            rk.moved();
+                            moved = true;
+                            return true;
+                        }
+                        else return false;
+                    }
                 }
             }
         }
