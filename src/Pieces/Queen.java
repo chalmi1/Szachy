@@ -1,6 +1,7 @@
 package Pieces;
 
 import Game.Board;
+import Game.Tile;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -12,10 +13,10 @@ import static java.lang.Integer.min;
 
 public class Queen extends Piece {
 
-    public Queen(Color c) {
+    public Queen(Tile.ColorEnum c) {
         super('H', c);
         color = c;
-        if (color == Color.white)
+        if (color == Tile.ColorEnum.white)
             file = new File("src/img/queenw.png");
         else file = new File("src/img/queenb.png");
         try {
@@ -77,5 +78,42 @@ public class Queen extends Piece {
         }
 
         return false;
+    }
+
+    @Override
+    public void updateControlled(Point start, Board brd) {
+        for (Point i = new Point(start.x-1, start.y-1); brd.isInside(i); i.x--, i.y-- ) {
+            brd.tile[i.x][i.y].setControlled(color);    // lewa góra
+            if (brd.tile[i.x][i.y].isOccupied()) break;
+        }
+        for (Point i = new Point(start.x+1, start.y+1); brd.isInside(i); i.x++, i.y++ ) {
+            brd.tile[i.x][i.y].setControlled(color);    // prawy dół
+            if (brd.tile[i.x][i.y].isOccupied()) break;
+        }
+        for (Point i = new Point(start.x+1, start.y-1); brd.isInside(i); i.x++, i.y-- ) {
+            brd.tile[i.x][i.y].setControlled(color);    // lewy dół
+            if (brd.tile[i.x][i.y].isOccupied()) break;
+        }
+        for (Point i = new Point(start.x-1, start.y+1); brd.isInside(i); i.x--, i.y++ ) {
+            brd.tile[i.x][i.y].setControlled(color);    // prawa góra
+            if (brd.tile[i.x][i.y].isOccupied()) break;
+        }
+
+        for (Point i = new Point(start.x, start.y-1); brd.isInside(i); i.y--) {
+            brd.tile[i.x][i.y].setControlled(color);    // lewo
+            if (brd.tile[i.x][i.y].isOccupied()) break;
+        }
+        for (Point i = new Point(start.x, start.y+1); brd.isInside(i); i.y++) {
+            brd.tile[i.x][i.y].setControlled(color);    // prawo
+            if (brd.tile[i.x][i.y].isOccupied()) break;
+        }
+        for (Point i = new Point(start.x-1, start.y); brd.isInside(i); i.x--) {
+            brd.tile[i.x][i.y].setControlled(color);    // góra
+            if (brd.tile[i.x][i.y].isOccupied()) break;
+        }
+        for (Point i = new Point(start.x+1, start.y); brd.isInside(i); i.x++) {
+            brd.tile[i.x][i.y].setControlled(color);    // dół
+            if (brd.tile[i.x][i.y].isOccupied()) break;
+        }
     }
 }

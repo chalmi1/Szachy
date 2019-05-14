@@ -1,5 +1,8 @@
 package Pieces;
 
+import Game.Board;
+import Game.Tile;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -8,16 +11,21 @@ public abstract class Piece{
     private char symbol;
     File file;
     BufferedImage image;
-    public enum Color {white, black}
-    Color color;
+    Tile.ColorEnum color;
+    Tile.ColorEnum opposingColor;
 
-    Piece(char symbol, Color color) {
+    Piece(char symbol, Tile.ColorEnum color) {
         this.symbol = symbol;
         this.color = color;
-        if (color == Color.black)
+        if (color == Tile.ColorEnum.black)
             this.symbol += 32;
+        if (color == Tile.ColorEnum.black)
+            opposingColor = Tile.ColorEnum.white;
+        if (color == Tile.ColorEnum.white)
+            opposingColor = Tile.ColorEnum.black;
     }
     public abstract boolean isLegal(Point start, Point destination, Game.Board brd);
+    public abstract void updateControlled(Point start, Board brd);
     public void draw(Graphics g, int x, int y) {
         g.drawImage(image, x, y, null);
     }
@@ -31,7 +39,7 @@ public abstract class Piece{
         return symbol;
     }
 
-    public Color getColor() {
+    public Tile.ColorEnum getColor() {
         return color;
     }
 }

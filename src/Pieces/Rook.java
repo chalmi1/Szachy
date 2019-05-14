@@ -1,5 +1,8 @@
 package Pieces;
 
+import Game.Board;
+import Game.Tile;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
@@ -11,10 +14,10 @@ import static java.lang.Integer.min;
 public class Rook extends Piece {
 
     private boolean moved = false;
-    public Rook(Color c) {
+    public Rook(Tile.ColorEnum c) {
         super('W', c);
         color = c;
-        if (color == Color.white)
+        if (color == Tile.ColorEnum.white)
         file = new File("src/img/rookw.png");
         else file = new File("src/img/rookb.png");
         try {
@@ -43,6 +46,7 @@ public class Rook extends Piece {
             if (brd.tile[i][stcol].isOccupied())
                 return false;
             }
+            moved = true;
             return true;
         }
 
@@ -52,10 +56,31 @@ public class Rook extends Piece {
                 if (brd.tile[strow][i].isOccupied())
                     return false;
             }
+            moved = true;
             return true;
         }
 
         return false;
+    }
+
+    @Override
+    public void updateControlled(Point start, Board brd) {
+        for (Point i = new Point(start.x, start.y-1); brd.isInside(i); i.y--) {
+            brd.tile[i.x][i.y].setControlled(color);    // lewo
+            if (brd.tile[i.x][i.y].isOccupied()) break;
+        }
+        for (Point i = new Point(start.x, start.y+1); brd.isInside(i); i.y++) {
+            brd.tile[i.x][i.y].setControlled(color);    // prawo
+            if (brd.tile[i.x][i.y].isOccupied()) break;
+        }
+        for (Point i = new Point(start.x-1, start.y); brd.isInside(i); i.x--) {
+            brd.tile[i.x][i.y].setControlled(color);    // góra
+            if (brd.tile[i.x][i.y].isOccupied()) break;
+        }
+        for (Point i = new Point(start.x+1, start.y); brd.isInside(i); i.x++) {
+            brd.tile[i.x][i.y].setControlled(color);    // dół
+            if (brd.tile[i.x][i.y].isOccupied()) break;
+        }
     }
 
     boolean hasMoved() {

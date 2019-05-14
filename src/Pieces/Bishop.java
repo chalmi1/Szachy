@@ -1,6 +1,7 @@
 package Pieces;
 
 import Game.Board;
+import Game.Tile;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -12,10 +13,10 @@ import static java.lang.Integer.min;
 
 public class Bishop extends Piece {
 
-    public Bishop(Color c) {
+    public Bishop(Tile.ColorEnum c) {
         super('G', c);
         color = c;
-        if (color == Color.white)
+        if (color == Tile.ColorEnum.white)
             file = new File("src/img/bishopw.png");
         else file = new File("src/img/bishopb.png");
         try {
@@ -57,5 +58,25 @@ public class Bishop extends Piece {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void updateControlled(Point start, Board brd) {
+        for (Point i = new Point(start.x-1, start.y-1); brd.isInside(i); i.x--, i.y-- ) {
+            brd.tile[i.x][i.y].setControlled(color);    // lewa góra
+            if (brd.tile[i.x][i.y].isOccupied()) break;
+        }
+        for (Point i = new Point(start.x+1, start.y+1); brd.isInside(i); i.x++, i.y++ ) {
+            brd.tile[i.x][i.y].setControlled(color);    // prawy dół
+            if (brd.tile[i.x][i.y].isOccupied()) break;
+        }
+        for (Point i = new Point(start.x+1, start.y-1); brd.isInside(i); i.x++, i.y-- ) {
+            brd.tile[i.x][i.y].setControlled(color);    // lewy dół
+            if (brd.tile[i.x][i.y].isOccupied()) break;
+        }
+        for (Point i = new Point(start.x-1, start.y+1); brd.isInside(i); i.x--, i.y++ ) {
+            brd.tile[i.x][i.y].setControlled(color);    // prawa góra
+            if (brd.tile[i.x][i.y].isOccupied()) break;
+        }
     }
 }

@@ -1,22 +1,20 @@
 package Pieces;
 
 import Game.Board;
+import Game.Tile;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
-import static java.lang.Integer.max;
-import static java.lang.Integer.min;
-
 public class King extends Piece {
     private boolean moved = false;
 
-    public King(Color c) {
+    public King(Tile.ColorEnum c) {
         super('K', c);
         color = c;
-        if (color == Color.white)
+        if (color == Tile.ColorEnum.white)
             file = new File("src/img/kingw.png");
         else file = new File("src/img/kingb.png");
         try {
@@ -34,10 +32,12 @@ public class King extends Piece {
         for (int y = start.y-1; y <= start.y+1; y++) {
             for (int x = start.x-1; x <= start.x+1; x++) {
                 if (destination.equals(new Point(x,y))) {
+                    if (brd.tile[destination.y][destination.x].getControlled(opposingColor))
+                        // pole kontrolowane przez przeciwnika
+                        return false;
                     if (brd.tile[destination.y][destination.x].isOccupied())
-                    {
+                        // gdy pole zajęte, wejdź tylko gdy stoi tam przeciwnik
                         return brd.tile[destination.y][destination.x].getPiece().color != brd.tile[start.y][start.x].getPiece().color;
-                    }
                     else
                         return true;
                 }
@@ -45,9 +45,10 @@ public class King extends Piece {
         }
 
         if (!moved) { // ROSZADA
-            if (color == Color.white) {
+            if (color == Tile.ColorEnum.white) {
                 if (destination.equals(new Point(6,7))) {   // krótka roszada białego
-                    if (brd.tile[7][5].isOccupied() || brd.tile[7][6].isOccupied())
+                    if (brd.tile[7][5].isOccupied() || brd.tile[7][6].isOccupied() ||
+                            brd.tile[7][5].getControlled(opposingColor) || brd.tile[7][6].getControlled(opposingColor))
                         return false;
                     if (brd.tile[7][7].getPiece().getSymbol() == 'W') {
                         Rook rk = (Rook)brd.tile[7][7].getPiece();
@@ -62,7 +63,8 @@ public class King extends Piece {
                     }
                 }
                 else if (destination.equals(new Point(2, 7))) { // długa roszada białego
-                    if (brd.tile[7][3].isOccupied() || brd.tile[7][2].isOccupied())
+                    if (brd.tile[7][3].isOccupied() || brd.tile[7][2].isOccupied() ||
+                            brd.tile[7][3].getControlled(opposingColor) || brd.tile[7][2].getControlled(opposingColor))
                         return false;
                     if (brd.tile[7][0].getPiece().getSymbol() == 'W') {
                         Rook rk = (Rook)brd.tile[7][0].getPiece();
@@ -77,9 +79,10 @@ public class King extends Piece {
                     }
                 }
             }
-            else if (color == Color.black) {
+            else if (color == Tile.ColorEnum.black) {
                 if (destination.equals(new Point(6,0))) {   // krótka roszada czarnego
-                    if (brd.tile[0][5].isOccupied() || brd.tile[0][6].isOccupied())
+                    if (brd.tile[0][5].isOccupied() || brd.tile[0][6].isOccupied() ||
+                    brd.tile[0][5].getControlled(opposingColor) || brd.tile[0][6].getControlled(opposingColor))
                         return false;
                     if (brd.tile[0][7].getPiece().getSymbol() == 'w') {
                         Rook rk = (Rook)brd.tile[0][7].getPiece();
@@ -94,7 +97,8 @@ public class King extends Piece {
                     }
                 }
                 else if (destination.equals(new Point(2, 0))) { // długa roszada czarnego
-                    if (brd.tile[0][3].isOccupied() || brd.tile[0][2].isOccupied())
+                    if (brd.tile[0][3].isOccupied() || brd.tile[0][2].isOccupied()  ||
+                            brd.tile[0][3].getControlled(opposingColor) || brd.tile[0][6].getControlled(opposingColor))
                         return false;
                     if (brd.tile[0][0].getPiece().getSymbol() == 'w') {
                         Rook rk = (Rook)brd.tile[0][0].getPiece();
@@ -113,5 +117,18 @@ public class King extends Piece {
 
 
         return false;
+    }
+
+    @Override
+    public void updateControlled(Point start, Board brd) {
+        for (Point i = new Point(start.x-1, start.y-1); i.x<=start.x+1 && brd.isInside(i); i.x++) {
+            for (; i.y <= start.y+1 && brd.isInside(i); i.y++) {
+                if  (start.equals(i))
+                    continue;
+                brd.tile[i.x][i.y].setControlled(color);
+                if (brd.tile[i.x][i.y].isOccupied()) break;
+            }
+
+        }
     }
 }

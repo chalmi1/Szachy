@@ -10,10 +10,15 @@ public class Tile {
     private Point IntCoords = new Point();    // koordynaty tablicowe
     public final static int dimension = 75;   // wymiar boku kazdego pola
     private static Point boardOffset = new Point();
+
+
+
     public enum ColorEnum {black, white, blackSelected, whiteSelected}
     private ColorEnum color;
     private Color colorRGB;
     private boolean occupied = false;
+    private boolean blackControlled = false;
+    private boolean whiteControlled = false;
     private Pieces.Piece piece = null;
 
     Tile(String coords, ColorEnum color) {
@@ -98,7 +103,7 @@ public class Tile {
         if (game.getTurn()==Player.Color.white)
         {
             if (piece != null &&
-                    piece.getColor() == Piece.Color.white)
+                    piece.getColor() == ColorEnum.white)
             {
                 click();
                 return true;
@@ -108,7 +113,7 @@ public class Tile {
         else if (game.getTurn()==Player.Color.black)
         {
             if (piece != null &&
-                    piece.getColor() == Piece.Color.black)
+                    piece.getColor() == ColorEnum.black)
             {
                 click();
                 return true;
@@ -140,4 +145,21 @@ public class Tile {
         return IntCoords;
     }
 
+    public boolean getControlled(ColorEnum color) {
+        if (color == ColorEnum.white)
+        return whiteControlled;
+        else
+            return blackControlled;
+    }
+
+    public void setControlled(ColorEnum color) {
+        if (color == ColorEnum.white)
+            whiteControlled = true;
+        else
+            blackControlled = true;
+    }
+
+    void resetControlled() {
+        whiteControlled = blackControlled = false;
+    }
 }

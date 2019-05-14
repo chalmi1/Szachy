@@ -57,6 +57,7 @@ public class Board extends JPanel {
                             tile[LastMoveTo.y][LastMoveTo.x].click();
                         LastMoveTo = coords;
                         game.notifyClick(2);
+                        updateControlledTiles();
 
                         grabbedPiece = null;
                         firstClickCoords = null;
@@ -65,6 +66,23 @@ public class Board extends JPanel {
                 }
             }
         });
+    }
+
+    private void updateControlledTiles() {
+        for (int col = 0; col < 8; col++) {
+            for (int row = 0; row < 8; row++) {
+                tile[row][col].resetControlled();
+            }
+        }
+        for (int col = 0; col < 8; col++) {
+            for (int row = 0; row < 8; row++) {
+                Piece piece = tile[row][col].getPiece();
+                if (piece == null)
+                    continue;
+                piece.updateControlled(new Point(row, col), this);
+            }
+        }
+
     }
 
     public void paint(Graphics g) {
@@ -77,21 +95,21 @@ public class Board extends JPanel {
 
     private void populate() {
         // Wieże
-        tile[0][0].placePiece(new Rook(Piece.Color.black));
-        tile[0][7].placePiece(new Rook(Piece.Color.black));
-        tile[7][0].placePiece(new Rook(Piece.Color.white));
-        tile[7][7].placePiece(new Rook(Piece.Color.white));
+        tile[0][0].placePiece(new Rook(Tile.ColorEnum.black));
+        tile[0][7].placePiece(new Rook(Tile.ColorEnum.black));
+        tile[7][0].placePiece(new Rook(Tile.ColorEnum.white));
+        tile[7][7].placePiece(new Rook(Tile.ColorEnum.white));
         // Gońce
-        tile[0][2].placePiece(new Bishop(Piece.Color.black));
-        tile[0][5].placePiece(new Bishop(Piece.Color.black));
-        tile[7][2].placePiece(new Bishop(Piece.Color.white));
-        tile[7][5].placePiece(new Bishop(Piece.Color.white));
+        tile[0][2].placePiece(new Bishop(Tile.ColorEnum.black));
+        tile[0][5].placePiece(new Bishop(Tile.ColorEnum.black));
+        tile[7][2].placePiece(new Bishop(Tile.ColorEnum.white));
+        tile[7][5].placePiece(new Bishop(Tile.ColorEnum.white));
         // Hetmany
-        tile[0][3].placePiece(new Queen(Piece.Color.black));
-        tile[7][3].placePiece(new Queen(Piece.Color.white));
+        tile[0][3].placePiece(new Queen(Tile.ColorEnum.black));
+        tile[7][3].placePiece(new Queen(Tile.ColorEnum.white));
         // Królowie
-        tile[0][4].placePiece(new King(Piece.Color.black));
-        tile[7][4].placePiece(new King(Piece.Color.white));
+        tile[0][4].placePiece(new King(Tile.ColorEnum.black));
+        tile[7][4].placePiece(new King(Tile.ColorEnum.white));
     }
 
     private void ShowTextBoard() {
@@ -101,8 +119,6 @@ public class Board extends JPanel {
                 System.out.print(tile[row][col].getPiece().getSymbol()+" ");
                 else
                     System.out.print("- ");
-
-
             }
             System.out.print("\n");
         }
@@ -122,5 +138,9 @@ public class Board extends JPanel {
         index.x = x;
         index.y = y;
         return index;
+    }
+
+    public boolean isInside(Point p) {
+        return p.x <= 7 && p.x >= 0 && p.y >= 0 && p.y <= 7;
     }
 }
