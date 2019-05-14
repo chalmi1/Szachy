@@ -107,6 +107,11 @@ public class Board extends JPanel {
         tile[0][7].placePiece(new Rook(Tile.ColorEnum.black));
         tile[7][0].placePiece(new Rook(Tile.ColorEnum.white));
         tile[7][7].placePiece(new Rook(Tile.ColorEnum.white));
+        // Skoczki
+        tile[0][1].placePiece(new Knight(Tile.ColorEnum.black));
+        tile[0][6].placePiece(new Knight(Tile.ColorEnum.black));
+        tile[7][1].placePiece(new Knight(Tile.ColorEnum.white));
+        tile[7][6].placePiece(new Knight(Tile.ColorEnum.white));
         // Gońce
         tile[0][2].placePiece(new Bishop(Tile.ColorEnum.black));
         tile[0][5].placePiece(new Bishop(Tile.ColorEnum.black));
