@@ -38,7 +38,7 @@ public class Board extends JPanel {
             @Override
             public void mouseReleased(MouseEvent e) {
                 Point coords2 = getTileIndex(e.getPoint());
-                if (coords.equals(coords2)) { // kursor nie opuscil pola)
+                if (coords.equals(coords2)) { // kursor nie opuscil pola
                     if (game.getTurnProgress() == 0 &&
                             tile[coords.y][coords.x].firstClick(game)) {
                         game.notifyClick(1);
@@ -46,22 +46,30 @@ public class Board extends JPanel {
                         firstClickCoords = coords;
                         repaint();
                     }
-                    else if (game.getTurnProgress() == 1 &&
-                            tile[coords.y][coords.x].secondClick(grabbedPiece, firstClickCoords, game.getBrd())) {
-                        tile[firstClickCoords.y][firstClickCoords.x].removePiece();
-                        if (LastMoveFrom != null)
-                            tile[LastMoveFrom.y][LastMoveFrom.x].click();
-                        LastMoveFrom = firstClickCoords;
-                        tile[coords.y][coords.x].placePiece(grabbedPiece);
-                        if (LastMoveTo != null)
-                            tile[LastMoveTo.y][LastMoveTo.x].click();
-                        LastMoveTo = coords;
-                        game.notifyClick(2);
-                        updateControlledTiles();
+                    else if (game.getTurnProgress() == 1) {
+                        if (tile[coords.y][coords.x].secondClick(grabbedPiece, firstClickCoords, game.getBrd())) {
+                            tile[firstClickCoords.y][firstClickCoords.x].removePiece();
+                            if (LastMoveFrom != null)
+                                tile[LastMoveFrom.y][LastMoveFrom.x].click();
+                            LastMoveFrom = firstClickCoords;
+                            tile[coords.y][coords.x].placePiece(grabbedPiece);
+                            if (LastMoveTo != null)
+                                tile[LastMoveTo.y][LastMoveTo.x].click();
+                            LastMoveTo = coords;
+                            game.notifyClick(2);
+                            updateControlledTiles();
 
-                        grabbedPiece = null;
-                        firstClickCoords = null;
-                        repaint();
+                            grabbedPiece = null;
+                            firstClickCoords = null;
+                            repaint();
+                        }
+                        else {
+                            tile[firstClickCoords.y][firstClickCoords.x].click();
+                            grabbedPiece = null;
+                            firstClickCoords = null;
+                            game.undoClick();
+                            repaint();
+                        }
                     }
                 }
             }

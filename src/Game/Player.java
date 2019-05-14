@@ -18,4 +18,6 @@ public class Player {
     void hasClicked() {
         clicked++;
     }
+
+    void undoClick() { clicked--; }
 }
