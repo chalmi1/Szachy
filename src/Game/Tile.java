@@ -11,8 +11,6 @@ public class Tile {
     public final static int dimension = 75;   // wymiar boku kazdego pola
     private static Point boardOffset = new Point();
 
-
-
     public enum ColorEnum {black, white, blackSelected, whiteSelected}
     private ColorEnum color;
     private Color colorRGB;

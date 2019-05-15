@@ -123,6 +123,23 @@ public class Board extends JPanel {
         // Królowie
         tile[0][4].placePiece(new King(Tile.ColorEnum.black));
         tile[7][4].placePiece(new King(Tile.ColorEnum.white));
+        // Pionki
+        tile[1][0].placePiece(new Pawn(Tile.ColorEnum.black));
+        tile[1][1].placePiece(new Pawn(Tile.ColorEnum.black));
+        tile[1][2].placePiece(new Pawn(Tile.ColorEnum.black));
+        tile[1][3].placePiece(new Pawn(Tile.ColorEnum.black));
+        tile[1][4].placePiece(new Pawn(Tile.ColorEnum.black));
+        tile[1][5].placePiece(new Pawn(Tile.ColorEnum.black));
+        tile[1][6].placePiece(new Pawn(Tile.ColorEnum.black));
+        tile[1][7].placePiece(new Pawn(Tile.ColorEnum.black));
+        tile[6][0].placePiece(new Pawn(Tile.ColorEnum.white));
+        tile[6][1].placePiece(new Pawn(Tile.ColorEnum.white));
+        tile[6][2].placePiece(new Pawn(Tile.ColorEnum.white));
+        tile[6][3].placePiece(new Pawn(Tile.ColorEnum.white));
+        tile[6][4].placePiece(new Pawn(Tile.ColorEnum.white));
+        tile[6][5].placePiece(new Pawn(Tile.ColorEnum.white));
+        tile[6][6].placePiece(new Pawn(Tile.ColorEnum.white));
+        tile[6][7].placePiece(new Pawn(Tile.ColorEnum.white));
     }
 
     private void ShowTextBoard() {
