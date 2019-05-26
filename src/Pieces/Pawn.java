@@ -11,6 +11,8 @@ import java.io.IOException;
 public class Pawn extends Piece {
 
     private boolean enPassant = false;
+    // zmienna warunkowa oznaczajaca mozliwosc zbicia
+    // tego pionka w przelocie (tylko po ruchu o dwa pola i tylko przez jedną turę)
 
     public Pawn(Tile.ColorEnum c) {
         super('P', c);
@@ -127,6 +129,25 @@ public class Pawn extends Piece {
 
     @Override
     public void updateControlled(Point start, Board brd) {
+        if (color == Tile.ColorEnum.white) {
+            Point destination = new Point(start.x-1, start.y-1);
+            if (brd.isInside(destination))
+                brd.tile[destination.x][destination.y].setControlled(color);
+            destination = new Point(start.x-1, start.y+1);
+            if (brd.isInside(destination))
+                brd.tile[destination.x][destination.y].setControlled(color);
+        }
+        else if (color == Tile.ColorEnum.black){
+            Point destination = new Point(start.x+1, start.y-1);
+            if (brd.isInside(destination))
+                brd.tile[destination.x][destination.y].setControlled(color);
+            destination = new Point(start.x+1, start.y+1);
+            if (brd.isInside(destination))
+                brd.tile[destination.x][destination.y].setControlled(color);
+        }
+    }
 
+    public void resetEnPassant() {
+        enPassant = false;
     }
 }

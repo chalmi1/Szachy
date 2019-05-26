@@ -88,6 +88,17 @@ public class Board extends JPanel {
                 if (piece == null)
                     continue;
                 piece.updateControlled(new Point(row, col), this);
+
+                if (piece.getSymbol() == 'p' || piece.getSymbol() == 'P') {
+                    if ((game.getTurn() == Player.Color.white &&
+                            piece.getColor() == Tile.ColorEnum.white) ||
+                            (game.getTurn() == Player.Color.black &&
+                                    piece.getColor() == Tile.ColorEnum.black)) {
+                        Pawn pwn = (Pawn)piece;
+                        pwn.resetEnPassant();
+                    }
+
+                }
             }
         }
 

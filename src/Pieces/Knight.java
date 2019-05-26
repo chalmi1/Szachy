@@ -27,50 +27,50 @@ public class Knight extends Piece{
     public boolean isLegal(Point start, Point destination, Board brd) {
         if (!brd.tile[destination.y][destination.x].isOccupied() ||
                 brd.tile[destination.y][destination.x].getPiece().getColor() != color) {
+            if (destination.equals(new Point(start.x-1,  start.y-2)))
+                return true;
+            if (destination.equals(new Point(start.x+1, start.y-2)))
+                return true;
+            if (destination.equals(new Point(start.x-1, start.y+2)))
+                return true;
+            if (destination.equals(new Point(start.x+1, start.y+2)))
+                return true;
             if (destination.equals(new Point(start.x-2, start.y-1)))
                 return true;
             if (destination.equals(new Point(start.x-2, start.y+1)))
                 return true;
             if (destination.equals(new Point(start.x+2, start.y-1)))
                 return true;
-            if (destination.equals(new Point(start.x+2, start.y+1)))
-                return true;
-            if (destination.equals(new Point(start.x-1, start.y-2)))
-                return true;
-            if (destination.equals(new Point(start.x+1, start.y-2)))
-                return true;
-            if (destination.equals(new Point(start.x-1, start.y+2)))
-                return true;
-            return destination.equals(new Point(start.x + 1, start.y + 2));
+            return destination.equals(new Point(start.x+2, start.y+1));
         }
         return false;
     }
 
     @Override
     public void updateControlled(Point start, Board brd) {
-        Point destination = new Point(start.x-2, start.y-1);
+        Point destination = new Point(start.x-1,  start.y-2);   // 2 lewo + 1 góra
         if (brd.isInside(destination))
-            brd.tile[destination.y][destination.x].setControlled(color);
-        destination = new Point(start.x-2, start.y+1);
+            brd.tile[destination.x][destination.y].setControlled(color);
+        destination = new Point(start.x+1, start.y-2);  // 2 lewo + 1 dół
         if (brd.isInside(destination))
-            brd.tile[destination.y][destination.x].setControlled(color);
-        destination = new Point(start.x+2, start.y-1);
+            brd.tile[destination.x][destination.y].setControlled(color);
+        destination = new Point(start.x-1, start.y+2);  // 2 prawo + 1 góra
         if (brd.isInside(destination))
-            brd.tile[destination.y][destination.x].setControlled(color);
-        destination = new Point(start.x+2, start.y+1);
+            brd.tile[destination.x][destination.y].setControlled(color);
+        destination = new Point(start.x+1, start.y+2);  // 2 prawo + 1 dół
         if (brd.isInside(destination))
-            brd.tile[destination.y][destination.x].setControlled(color);
-        destination = new Point(start.x-1, start.y-2);
+            brd.tile[destination.x][destination.y].setControlled(color);
+        destination = new Point(start.x-2, start.y-1);  // 2 góra + 1 lewo
         if (brd.isInside(destination))
-            brd.tile[destination.y][destination.x].setControlled(color);
-        destination = new Point(start.x+1, start.y-2);
+            brd.tile[destination.x][destination.y].setControlled(color);
+        destination = new Point(start.x-2, start.y+1);  // 2 góra + 1 prawo
         if (brd.isInside(destination))
-            brd.tile[destination.y][destination.x].setControlled(color);
-        destination = new Point(start.x-1, start.y+2);
+            brd.tile[destination.x][destination.y].setControlled(color);
+        destination = new Point(start.x+2, start.y-1);  // 2 dół + 1 lewo
         if (brd.isInside(destination))
-            brd.tile[destination.y][destination.x].setControlled(color);
-        destination = new Point(start.x+1, start.y+2);
+            brd.tile[destination.x][destination.y].setControlled(color);
+        destination = new Point(start.x+2, start.y+1);  // 2 dół + 1 prawo
         if (brd.isInside(destination))
-            brd.tile[destination.y][destination.x].setControlled(color);
+            brd.tile[destination.x][destination.y].setControlled(color);
     }
 }
