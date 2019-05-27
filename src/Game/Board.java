@@ -97,7 +97,6 @@ public class Board extends JPanel {
                         Pawn pwn = (Pawn)piece;
                         pwn.resetEnPassant();
                     }
-
                 }
             }
         }

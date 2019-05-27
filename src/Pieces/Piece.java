@@ -42,4 +42,5 @@ public abstract class Piece{
     public Tile.ColorEnum getColor() {
         return color;
     }
+
 }
