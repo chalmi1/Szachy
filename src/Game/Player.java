@@ -1,6 +1,6 @@
 package Game;
 
-public class Player {
+class Player {
 
 
     public enum Color {white, black}
@@ -8,6 +8,7 @@ public class Player {
     private int clicked = 0;    // ilosc klikniec: 0 - nic sie nie stalo
                                 // 1 - naciśnięta bierka do ruszenia
                                 // 2 - naciśnięte pole docelowe
+    private boolean inCheck = false;
 
     Player(Color c) {
         color = c;
@@ -20,4 +21,12 @@ public class Player {
     }
 
     void undoClick() { clicked--; }
+
+    boolean isInCheck() {
+        return inCheck;
+    }
+
+    void setInCheck(boolean inCheck) {
+        this.inCheck = inCheck;
+    }
 }

@@ -98,7 +98,7 @@ public class Tile {
     }
 
     boolean firstClick(Game game) {
-        if (game.getTurn()==Player.Color.white)
+        if (game.getTurn().getColor()==Player.Color.white)
         {
             if (piece != null &&
                     piece.getColor() == ColorEnum.white)
@@ -108,7 +108,7 @@ public class Tile {
             }
             else return false;
         }
-        else if (game.getTurn()==Player.Color.black)
+        else if (game.getTurn().getColor()==Player.Color.black)
         {
             if (piece != null &&
                     piece.getColor() == ColorEnum.black)
@@ -122,13 +122,7 @@ public class Tile {
     }
 
     boolean secondClick(Piece grabbedPiece, Point beginning, Board brd) {
-        if (grabbedPiece.isLegal(beginning, IntCoords, brd))
-        {
-            click();
-            return true;
-        }
-        else
-            return false;
+        return grabbedPiece.isLegal(beginning, IntCoords, brd);
     }
 
     public Piece getPiece() {

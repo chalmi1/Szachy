@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 public class Board extends JPanel {
     public Tile[][] tile = new Tile[8][8];
@@ -28,6 +29,7 @@ public class Board extends JPanel {
         }
         populate();
         ShowTextBoard();
+        generateMoveList(Tile.ColorEnum.white);
         addMouseListener(new MouseAdapter() {
             Point coords;
             @Override
@@ -49,19 +51,28 @@ public class Board extends JPanel {
                     else if (game.getTurnProgress() == 1) {
                         if (tile[coords.y][coords.x].secondClick(grabbedPiece, firstClickCoords, game.getBrd())) {
                             tile[firstClickCoords.y][firstClickCoords.x].removePiece();
-                            if (LastMoveFrom != null)
-                                tile[LastMoveFrom.y][LastMoveFrom.x].click();
-                            LastMoveFrom = firstClickCoords;
+                            Piece backup = tile[coords.y][coords.x].getPiece();
                             tile[coords.y][coords.x].placePiece(grabbedPiece);
-                            if (LastMoveTo != null)
-                                tile[LastMoveTo.y][LastMoveTo.x].click();
-                            LastMoveTo = coords;
-                            game.notifyClick(2);
-                            updateControlledTiles();
 
-                            grabbedPiece = null;
-                            firstClickCoords = null;
-                            repaint();
+                            if (updateControlledTiles() && !game.getTurn().isInCheck()) {  // jesli ruch byl dozwolony
+                                tile[coords.y][coords.x].click();
+                                if (LastMoveFrom != null)   // jesli byl poprzedni ruch to go podswietl
+                                    tile[LastMoveFrom.y][LastMoveFrom.x].click();
+                                LastMoveFrom = firstClickCoords;
+                                if (LastMoveTo != null)     // jesli byl poprzedni ruch to go podswietl
+                                    tile[LastMoveTo.y][LastMoveTo.x].click();
+                                LastMoveTo = coords;
+                                grabbedPiece = null;
+                                firstClickCoords = null;
+                                game.notifyClick(2);
+                                resetEnPassant();
+                                repaint();
+                            }
+                            else {
+                                tile[firstClickCoords.y][firstClickCoords.x].placePiece(grabbedPiece);
+                                tile[coords.y][coords.x].placePiece(backup);
+                            }
+
                         }
                         else {
                             tile[firstClickCoords.y][firstClickCoords.x].click();
@@ -76,7 +87,14 @@ public class Board extends JPanel {
         });
     }
 
-    private void updateControlledTiles() {
+    private boolean updateControlledTiles() {   // funkcja aktualizująca flagi pól kontrolowanych
+        // funkcja zwraca true lub false w zależności od tego czy wykonany wcześniej ruch był prawidłowy
+        //  pod kątem pól kontrolowanych
+        // flagi są używane aby
+        // 1. uniemożliwiać ruch króla w zaszachowane pole
+        // 2. uniemożliwić ruch bierki przypiętej absolutnie
+        //  (tak że po jej ruchu odsłonięty zostałby szach na własnym królu)
+        // 3. wymusić wyjście z szacha wykonanego przez przeciwnika
         for (int col = 0; col < 8; col++) {
             for (int row = 0; row < 8; row++) {
                 tile[row][col].resetControlled();
@@ -87,20 +105,99 @@ public class Board extends JPanel {
                 Piece piece = tile[row][col].getPiece();
                 if (piece == null)
                     continue;
-                piece.updateControlled(new Point(row, col), this);
+                piece.updateControlled(new Point(row, col), this);  // każda bierka ustawia flagi kontroli
+                // na polach które obecnie kontroluje
+            }
+        }
+        for (int col = 0; col < 8; col++) {
+            for (int row = 0; row < 8; row++) {
+                Piece piece = tile[row][col].getPiece();
+                if (piece == null)
+                    continue;
+                if (piece.getSymbol() == 'k' || piece.getSymbol() == 'K') {
+                    switch (game.getTurn().getColor()) {
+                    case white: // czy po ruchu białego biały jest szachowany?
+                        if (piece.getColor() == Tile.ColorEnum.white) {
+                            // król jest szachowany
+                            if (tile[row][col].getControlled(Tile.ColorEnum.black))
+                                return false;   // (ruch niedozwolony)
+                            else
+                                game.white.setInCheck(false);
+                        }
+                        break;
+                    case black: // czy po ruchu czarnego czarny jest szachowany?
+                        if (piece.getColor() == Tile.ColorEnum.black) {
+                            // król jest szachowany
+                            if (tile[row][col].getControlled(Tile.ColorEnum.white))
+                                return false;   // (ruch niedozwolony)
+                            else
+                                game.black.setInCheck(false);
 
-                if (piece.getSymbol() == 'p' || piece.getSymbol() == 'P') {
-                    if ((game.getTurn() == Player.Color.white &&
-                            piece.getColor() == Tile.ColorEnum.white) ||
-                            (game.getTurn() == Player.Color.black &&
-                                    piece.getColor() == Tile.ColorEnum.black)) {
-                        Pawn pwn = (Pawn)piece;
-                        pwn.resetEnPassant();
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        for (int col = 0; col < 8; col++) { // pętla aktualizująca flagi szacha
+            for (int row = 0; row < 8; row++) {
+                Piece piece = tile[row][col].getPiece();
+                if (piece == null)
+                    continue;
+
+                if (piece.getSymbol() == 'k' || piece.getSymbol() == 'K') {
+                    switch (game.getTurn().getColor()) {
+                        case white: // czy po ruchu białego czarny jest szachowany?
+                            if (piece.getColor() == Tile.ColorEnum.black) {
+                                // król jest szachowany
+                                if (tile[row][col].getControlled(Tile.ColorEnum.white)) {
+                                    game.black.setInCheck(true);
+                                    System.out.println("Szach!");
+                                }
+
+                                else
+                                    game.black.setInCheck(false);
+                            }
+                            break;
+                        case black: // czy po ruchu czarnego biały jest szachowany?
+                            if (piece.getColor() == Tile.ColorEnum.white) {
+                                // król jest szachowany
+                                if (tile[row][col].getControlled(Tile.ColorEnum.black)) {
+                                    game.white.setInCheck(true);
+                                    System.out.println("Szach!");
+                                }
+
+                                else
+                                    game.white.setInCheck(false);
+
+                            }
+                            break;
                     }
                 }
             }
         }
 
+        return true;
+    }
+
+    private void resetEnPassant() { // usuwa możliwość bicia w przelocie
+            // (funkcja powinna być wywoływana po każdej turze)
+        for (int col = 0; col < 8; col++) {
+            for (int row = 0; row < 8; row++) {
+                Piece piece = tile[row][col].getPiece();
+                if (piece == null)
+                    continue;
+                if (piece.getSymbol() == 'p' || piece.getSymbol() == 'P') {
+                    if ((game.getTurn().getColor() == Player.Color.white &&
+                            piece.getColor() == Tile.ColorEnum.white) ||
+                            (game.getTurn().getColor() == Player.Color.black &&
+                                    piece.getColor() == Tile.ColorEnum.black)) {
+                        Pawn pwn = (Pawn) piece;
+                        pwn.resetEnPassant();   // anulowanie mozliwosci bicia w przelocie po ruchu
+                    }
+                }
+            }
+        }
     }
 
     public void paint(Graphics g) {
@@ -168,19 +265,73 @@ public class Board extends JPanel {
         return new Point(p.x/Tile.dimension, p.y/Tile.dimension);
     }
 
-    private Point getTileIndex(String coords) {
-        Point index = new Point();
-        char chx = coords.charAt(0);
-        int x = (int)chx - (int)'a';
-        char chy = coords.charAt(1);
-        int y = Integer.parseInt(""+chy);
-        y = Math.abs(8-y);
-        index.x = x;
-        index.y = y;
-        return index;
-    }
-
     public boolean isInside(Point p) {
         return p.x <= 7 && p.x >= 0 && p.y >= 0 && p.y <= 7;
     }
+
+
+    private ArrayList<Move> generateMoveList(Tile.ColorEnum color) {
+        // TODO: listuj tylko te kolorki
+        ArrayList<Move> list = new ArrayList<Move>();
+        for (int col = 0; col < 8; col++) { // pętla zbierająca wszystkie dozwolone ruchy bierek
+            for (int row = 0; row < 8; row++) {
+                Piece piece = tile[row][col].getPiece();
+                if (piece == null)
+                    continue;
+
+                for (int x = 0; x < 8; x++) { // pętla zbierająca wszystkie dozwolone ruchy bierek
+                    for (int y = 0; y < 8; y++) {
+                        Move move = new Move(new Point(col, row), new Point(x,y));
+                        if (piece.isLegal(move.from, move.to, this)) {
+                            list.add(move);
+                            System.out.println("Ruch: "+move.from.x+move.from.y+"-"+move.to.x+move.to.y);
+                        }
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
+    private boolean isCheckmate() {
+        Tile.ColorEnum color;
+        switch(game.getTurn().getColor())
+        {
+            case white:
+                color = Tile.ColorEnum.white;
+                break;
+            case black:
+                color = Tile.ColorEnum.black;
+                break;
+            default:
+                color = Tile.ColorEnum.white;
+        }
+        ArrayList<Move> list = generateMoveList(color);
+        for ( Move i : list) {  // pętla po liście ruchów
+            // wykonanie ruchu
+            Piece grabbedPiece = tile[i.from.y][i.from.x].getPiece();
+            tile[i.from.y][i.from.x].removePiece();
+            Piece backup = tile[i.to.y][i.to.x].getPiece();
+            tile[i.to.y][i.to.x].placePiece(grabbedPiece);
+
+            updateControlledTiles();
+
+            // przywracanie poprzedniego stanu
+            tile[i.from.y][i.from.x].placePiece(grabbedPiece);
+            tile[i.to.y][i.to.x].removePiece();
+            if (backup != null)
+                tile[i.to.y][i.to.x].placePiece(backup);
+
+            if (!game.getTurn().isInCheck())
+            {
+                updateControlledTiles();
+                return false;
+            }
+
+        }
+        updateControlledTiles();
+        return true;
+    }
+
+
 }
