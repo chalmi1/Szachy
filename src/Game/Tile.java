@@ -10,6 +10,8 @@ public class Tile {
     private Point IntCoords = new Point();    // koordynaty tablicowe
     public final static int dimension = 75;   // wymiar boku kazdego pola
     private static Point boardOffset = new Point();
+    private static Point fontOffsetV = new Point();
+    private static Point fontOffsetH = new Point();
 
     public enum ColorEnum {black, white, blackSelected, whiteSelected}
     private ColorEnum color;
@@ -25,6 +27,10 @@ public class Tile {
         convertPosToIndexed();
         boardOffset.x = 0;
         boardOffset.y = 0;
+        fontOffsetV.x = 2;
+        fontOffsetV.y = 15;
+        fontOffsetH.x = dimension - 10;
+        fontOffsetH.y = dimension - 5;
     }
     public boolean isOccupied() { return occupied; }
 
@@ -33,6 +39,26 @@ public class Tile {
         int x = IntCoords.x*dimension+boardOffset.x;
         int y = IntCoords.y*dimension+boardOffset.y;
         g.fillRect(x, y, dimension, dimension);
+
+        Color fontColor;
+        switch (color) {
+            case black:
+            case blackSelected:
+                fontColor = new Color(255, 209, 169);
+                break;
+            default:
+                fontColor = new Color(156, 97, 41);
+                break;
+        }
+
+        if (ChCoords.substring(0,1).equals("a")) {
+            g.setColor(fontColor);
+            g.drawString(ChCoords.substring(1,2), x+fontOffsetV.x, y+fontOffsetV.y);
+        }
+        if (ChCoords.substring(1,2).equals("1")) {
+            g.setColor(fontColor);
+            g.drawString(ChCoords.substring(0,1), x+fontOffsetH.x, y+fontOffsetH.y);
+        }
 
         if (piece != null) {
             Point offset = piece.getTileOffset();
@@ -126,6 +152,7 @@ public class Tile {
     }
 
     public Piece getPiece() {
+        assert piece != null : "Getpiece NULL";
         return piece;
     }
 

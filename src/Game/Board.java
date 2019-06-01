@@ -15,6 +15,7 @@ public class Board extends JPanel {
     private Game game;
     private Point LastMoveFrom = null;
     private Point LastMoveTo = null;
+    private MouseAdapter mouse;
 
     Board(Game g) {
         game = g;
@@ -29,8 +30,7 @@ public class Board extends JPanel {
         }
         populate();
         ShowTextBoard();
-        generateMoveList(Tile.ColorEnum.white);
-        addMouseListener(new MouseAdapter() {
+        mouse = new MouseAdapter() {
             Point coords;
             @Override
             public void mousePressed(MouseEvent e) {
@@ -84,7 +84,8 @@ public class Board extends JPanel {
                     }
                 }
             }
-        });
+        };
+        addMouseListener(mouse);
     }
 
     private boolean updateControlledTiles() {   // funkcja aktualizująca flagi pól kontrolowanych
@@ -204,6 +205,7 @@ public class Board extends JPanel {
         for (int col = 0; col < 8; col++) {
             for (int row = 0; row < 8; row++) {
                 tile[row][col].draw(g);
+
             }
         }
     }
@@ -336,5 +338,11 @@ public class Board extends JPanel {
         return true;
     }
 
+    void freeze() {
+        removeMouseListener(mouse);
+    }
 
+    void unfreeze() {
+        addMouseListener(mouse);
+    }
 }

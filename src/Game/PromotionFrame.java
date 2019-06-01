@@ -25,6 +25,7 @@ public class PromotionFrame extends JFrame implements ActionListener {
         color = pawn.getColor();
         this.brd = brd;
         this.place = place;
+        brd.freeze();
         showGUI(color);
     }
 
@@ -67,24 +68,28 @@ public class PromotionFrame extends JFrame implements ActionListener {
         if (source == queen) {
             brd.tile[place.y][place.x].placePiece(new Queen(color));
             brd.repaint();
+            brd.unfreeze();
             setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
         }
         else if (source == rook) {
             brd.tile[place.y][place.x].placePiece(new Rook(color));
             brd.repaint();
+            brd.unfreeze();
             setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
         }
         else if (source == knight) {
             brd.tile[place.y][place.x].placePiece(new Knight(color));
             brd.repaint();
+            brd.unfreeze();
             setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
         }
         else if (source == bishop) {
             brd.tile[place.y][place.x].placePiece(new Bishop(color));
             brd.repaint();
+            brd.unfreeze();
             setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
         }
