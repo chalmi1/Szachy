@@ -271,12 +271,13 @@ public class Board extends JPanel {
 
 
     private ArrayList<Move> generateMoveList(Tile.ColorEnum color) {
-        // TODO: listuj tylko te kolorki
         ArrayList<Move> list = new ArrayList<Move>();
         for (int col = 0; col < 8; col++) { // pętla zbierająca wszystkie dozwolone ruchy bierek
             for (int row = 0; row < 8; row++) {
                 Piece piece = tile[row][col].getPiece();
                 if (piece == null)
+                    continue;
+                if (piece.getColor() != color)
                     continue;
 
                 for (int x = 0; x < 8; x++) { // pętla zbierająca wszystkie dozwolone ruchy bierek
@@ -284,7 +285,6 @@ public class Board extends JPanel {
                         Move move = new Move(new Point(col, row), new Point(x,y));
                         if (piece.isLegal(move.from, move.to, this)) {
                             list.add(move);
-                            System.out.println("Ruch: "+move.from.x+move.from.y+"-"+move.to.x+move.to.y);
                         }
                     }
                 }
@@ -293,7 +293,8 @@ public class Board extends JPanel {
         return list;
     }
 
-    private boolean isCheckmate() {
+    boolean isCheckmate() {
+        updateControlledTiles();
         Tile.ColorEnum color;
         switch(game.getTurn().getColor())
         {
@@ -306,6 +307,8 @@ public class Board extends JPanel {
             default:
                 color = Tile.ColorEnum.white;
         }
+        if (!game.getTurn().isInCheck())
+            return false;
         ArrayList<Move> list = generateMoveList(color);
         for ( Move i : list) {  // pętla po liście ruchów
             // wykonanie ruchu
