@@ -37,6 +37,7 @@ public class Rook extends Piece {
         int derow = destination.y;
 
         if (brd.tile[derow][decol].isOccupied() &&  // nie można zbić bierki własnego koloru
+                brd.tile[strow][stcol].isOccupied() &&
                 brd.tile[derow][decol].getPiece().color == brd.tile[strow][stcol].getPiece().color)
             return false;
 
@@ -46,7 +47,6 @@ public class Rook extends Piece {
             if (brd.tile[i][stcol].isOccupied())
                 return false;
             }
-            moved = true;
             return true;
         }
 
@@ -56,7 +56,6 @@ public class Rook extends Piece {
                 if (brd.tile[strow][i].isOccupied())
                     return false;
             }
-            moved = true;
             return true;
         }
 
@@ -83,11 +82,16 @@ public class Rook extends Piece {
         }
     }
 
+    @Override
+    public void specialMove(Point destination, Board brd) {
+        assert additional : "specialMove() wywołane gdy ruch nie jest specjalny";
+    }
+
     boolean hasMoved() {
         return moved;
     }
 
-    void moved() {
+    public void moved() {
         this.moved = true;
     }
 }

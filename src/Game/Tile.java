@@ -148,11 +148,26 @@ public class Tile {
     }
 
     boolean secondClick(Piece grabbedPiece, Point beginning, Board brd) {
-        return grabbedPiece.isLegal(beginning, IntCoords, brd);
+        grabbedPiece.additional = false;
+        if (grabbedPiece.isLegal(beginning, IntCoords, brd)) {
+            if (grabbedPiece.getSymbol() == 'K' || grabbedPiece.getSymbol() == 'k') {
+                Pieces.King king = (Pieces.King)grabbedPiece;
+                king.moved();
+            }
+            if (grabbedPiece.getSymbol() == 'W' || grabbedPiece.getSymbol() == 'w') {
+                Pieces.Rook rook = (Pieces.Rook)grabbedPiece;
+                rook.moved();
+            }
+            if (grabbedPiece.additional)
+                grabbedPiece.specialMove(IntCoords, brd);
+            return true;
+        }
+        return false;
     }
 
     public Piece getPiece() {
-        assert piece != null : "Getpiece NULL";
+        if (piece == null)
+            throw new NullPointerException("Wezwano bierkę z pola na którym nie ma bierki!");
         return piece;
     }
 

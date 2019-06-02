@@ -13,6 +13,7 @@ public abstract class Piece{
     BufferedImage image;
     Tile.ColorEnum color;
     Tile.ColorEnum opposingColor;
+    public boolean additional = false; // flaga wymagająca dodatkowych rzeczy po wykonaniu ruchu
 
     Piece(char symbol, Tile.ColorEnum color) {
         this.symbol = symbol;
@@ -26,6 +27,7 @@ public abstract class Piece{
     }
     public abstract boolean isLegal(Point start, Point destination, Game.Board brd);
     public abstract void updateControlled(Point start, Board brd);
+    public abstract void specialMove(Point destination, Board brd);
     public void draw(Graphics g, int x, int y) {
         g.drawImage(image, x, y, null);
     }

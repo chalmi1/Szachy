@@ -51,7 +51,9 @@ public class Board extends JPanel {
                     else if (game.getTurnProgress() == 1) {
                         if (tile[coords.y][coords.x].secondClick(grabbedPiece, firstClickCoords, game.getBrd())) {
                             tile[firstClickCoords.y][firstClickCoords.x].removePiece();
-                            Piece backup = tile[coords.y][coords.x].getPiece();
+                            Piece backup = null;
+                            if (tile[coords.y][coords.x].isOccupied())
+                            backup = tile[coords.y][coords.x].getPiece();
                             tile[coords.y][coords.x].placePiece(grabbedPiece);
 
                             if (updateControlledTiles() && !game.getTurn().isInCheck()) {  // jesli ruch byl dozwolony
@@ -70,6 +72,7 @@ public class Board extends JPanel {
                             }
                             else {
                                 tile[firstClickCoords.y][firstClickCoords.x].placePiece(grabbedPiece);
+                                if (backup != null)
                                 tile[coords.y][coords.x].placePiece(backup);
                             }
 
@@ -103,8 +106,10 @@ public class Board extends JPanel {
         }
         for (int col = 0; col < 8; col++) {
             for (int row = 0; row < 8; row++) {
-                Piece piece = tile[row][col].getPiece();
-                if (piece == null)
+                Piece piece;
+                if (tile[row][col].isOccupied())
+                piece = tile[row][col].getPiece();
+                else
                     continue;
                 piece.updateControlled(new Point(row, col), this);  // każda bierka ustawia flagi kontroli
                 // na polach które obecnie kontroluje
@@ -112,8 +117,10 @@ public class Board extends JPanel {
         }
         for (int col = 0; col < 8; col++) {
             for (int row = 0; row < 8; row++) {
-                Piece piece = tile[row][col].getPiece();
-                if (piece == null)
+                Piece piece;
+                if (tile[row][col].isOccupied())
+                    piece = tile[row][col].getPiece();
+                else
                     continue;
                 if (piece.getSymbol() == 'k' || piece.getSymbol() == 'K') {
                     switch (game.getTurn().getColor()) {
@@ -142,8 +149,10 @@ public class Board extends JPanel {
         }
         for (int col = 0; col < 8; col++) { // pętla aktualizująca flagi szacha
             for (int row = 0; row < 8; row++) {
-                Piece piece = tile[row][col].getPiece();
-                if (piece == null)
+                Piece piece;
+                if (tile[row][col].isOccupied())
+                    piece = tile[row][col].getPiece();
+                else
                     continue;
 
                 if (piece.getSymbol() == 'k' || piece.getSymbol() == 'K') {
@@ -185,8 +194,10 @@ public class Board extends JPanel {
             // (funkcja powinna być wywoływana po każdej turze)
         for (int col = 0; col < 8; col++) {
             for (int row = 0; row < 8; row++) {
-                Piece piece = tile[row][col].getPiece();
-                if (piece == null)
+                Piece piece;
+                if (tile[row][col].isOccupied())
+                    piece = tile[row][col].getPiece();
+                else
                     continue;
                 if (piece.getSymbol() == 'p' || piece.getSymbol() == 'P') {
                     if ((game.getTurn().getColor() == Player.Color.white &&
@@ -254,7 +265,7 @@ public class Board extends JPanel {
     private void ShowTextBoard() {
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
-                if (tile[row][col].getPiece() != null)
+                if (tile[row][col].isOccupied())
                 System.out.print(tile[row][col].getPiece().getSymbol()+" ");
                 else
                     System.out.print("- ");
@@ -264,7 +275,13 @@ public class Board extends JPanel {
     }
 
     private Point getTileIndex(Point p) {
-        return new Point(p.x/Tile.dimension, p.y/Tile.dimension);
+        Point index = new Point(p.x/Tile.dimension, p.y/Tile.dimension);
+        if (index.x > 7)
+            index.x = 7;
+        if (index.y > 7)
+            index.y = 7;
+
+        return index;
     }
 
     public boolean isInside(Point p) {
@@ -272,12 +289,14 @@ public class Board extends JPanel {
     }
 
 
-    private ArrayList<Move> generateMoveList(Tile.ColorEnum color) {
+    ArrayList<Move> generateMoveList(Tile.ColorEnum color) {
         ArrayList<Move> list = new ArrayList<Move>();
         for (int col = 0; col < 8; col++) { // pętla zbierająca wszystkie dozwolone ruchy bierek
             for (int row = 0; row < 8; row++) {
-                Piece piece = tile[row][col].getPiece();
-                if (piece == null)
+                Piece piece;
+                if (tile[row][col].isOccupied())
+                    piece = tile[row][col].getPiece();
+                else
                     continue;
                 if (piece.getColor() != color)
                     continue;
@@ -316,7 +335,9 @@ public class Board extends JPanel {
             // wykonanie ruchu
             Piece grabbedPiece = tile[i.from.y][i.from.x].getPiece();
             tile[i.from.y][i.from.x].removePiece();
-            Piece backup = tile[i.to.y][i.to.x].getPiece();
+            Piece backup = null;
+            if (tile[i.to.y][i.to.x].isOccupied())
+                backup = tile[i.to.y][i.to.x].getPiece();
             tile[i.to.y][i.to.x].placePiece(grabbedPiece);
 
             updateControlledTiles();

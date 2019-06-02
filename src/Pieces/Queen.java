@@ -116,4 +116,9 @@ public class Queen extends Piece {
             if (brd.tile[i.x][i.y].isOccupied()) break;
         }
     }
+
+    @Override
+    public void specialMove(Point destination, Board brd) {
+        assert additional : "specialMove() wywołane gdy ruch nie jest specjalny";
+    }
 }

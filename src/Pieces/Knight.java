@@ -73,4 +73,9 @@ public class Knight extends Piece{
         if (brd.isInside(destination))
             brd.tile[destination.x][destination.y].setControlled(color);
     }
+
+    @Override
+    public void specialMove(Point destination, Board brd) {
+        assert additional : "specialMove() wywołane gdy ruch nie jest specjalny";
+    }
 }

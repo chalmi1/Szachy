@@ -4,21 +4,15 @@ import javax.swing.*;
 import java.awt.*;
 
 class MyFrame extends JFrame {
-    private MyFrame(String name) {
+    MyFrame(String name, Board board) {
         super(name);
-        setResizable(false);
-        // Utworzenie panelu odpowiadającego za rozmiar okna (JFrame.setSize nie uwzględnia ramki)
-        JPanel brd = new JPanel();
-        brd.setPreferredSize(new Dimension(600, 600));
-        add(brd);
-        pack();
-    }
-    static void createAndShowGUI(Board brd) {
-        MyFrame frame = new MyFrame("Szachy");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-        frame.setLocationRelativeTo(null);
-        frame.getContentPane().add(brd);
-    }
 
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setVisible(true);
+        setLocationRelativeTo(null);
+        getContentPane().setPreferredSize(new Dimension(590, 590));
+        getContentPane().add(board);
+        pack();
+        setResizable(false);
+    }
 }

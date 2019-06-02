@@ -10,6 +10,7 @@ import java.io.IOException;
 
 public class King extends Piece {
     private boolean moved = false;
+    private Rook rk;
 
     public King(Tile.ColorEnum c) {
         super('K', c);
@@ -50,13 +51,11 @@ public class King extends Piece {
                     if (brd.tile[7][5].isOccupied() || brd.tile[7][6].isOccupied() ||
                             brd.tile[7][5].getControlled(opposingColor) || brd.tile[7][6].getControlled(opposingColor))
                         return false;
-                    if (brd.tile[7][7].getPiece().getSymbol() == 'W') {
-                        Rook rk = (Rook)brd.tile[7][7].getPiece();
+                    if (brd.tile[7][0].isOccupied() &&
+                            brd.tile[7][7].getPiece().getSymbol() == 'W') {
+                        rk = (Rook)brd.tile[7][7].getPiece();
                         if (!rk.hasMoved()) {
-                            brd.tile[7][7].removePiece();
-                            brd.tile[7][5].placePiece(rk);
-                            rk.moved();
-                            moved = true;
+                            additional = true;
                             return true;
                         }
                         else return false;
@@ -66,13 +65,11 @@ public class King extends Piece {
                     if (brd.tile[7][3].isOccupied() || brd.tile[7][2].isOccupied() ||
                             brd.tile[7][3].getControlled(opposingColor) || brd.tile[7][2].getControlled(opposingColor))
                         return false;
-                    if (brd.tile[7][0].getPiece().getSymbol() == 'W') {
-                        Rook rk = (Rook)brd.tile[7][0].getPiece();
+                    if (brd.tile[7][0].isOccupied() &&
+                            brd.tile[7][0].getPiece().getSymbol() == 'W') {
+                        rk = (Rook)brd.tile[7][0].getPiece();
                         if (!rk.hasMoved()) {
-                            brd.tile[7][0].removePiece();
-                            brd.tile[7][3].placePiece(rk);
-                            rk.moved();
-                            moved = true;
+                            additional = true;
                             return true;
                         }
                         else return false;
@@ -84,13 +81,11 @@ public class King extends Piece {
                     if (brd.tile[0][5].isOccupied() || brd.tile[0][6].isOccupied() ||
                     brd.tile[0][5].getControlled(opposingColor) || brd.tile[0][6].getControlled(opposingColor))
                         return false;
-                    if (brd.tile[0][7].getPiece().getSymbol() == 'w') {
-                        Rook rk = (Rook)brd.tile[0][7].getPiece();
+                    if (brd.tile[7][0].isOccupied() &&
+                            brd.tile[0][7].getPiece().getSymbol() == 'w') {
+                        rk = (Rook)brd.tile[0][7].getPiece();
                         if (!rk.hasMoved()) {
-                            brd.tile[0][7].removePiece();
-                            brd.tile[0][5].placePiece(rk);
-                            rk.moved();
-                            moved = true;
+                            additional = true;
                             return true;
                         }
                         else return false;
@@ -100,13 +95,11 @@ public class King extends Piece {
                     if (brd.tile[0][3].isOccupied() || brd.tile[0][2].isOccupied()  ||
                             brd.tile[0][3].getControlled(opposingColor) || brd.tile[0][6].getControlled(opposingColor))
                         return false;
-                    if (brd.tile[0][0].getPiece().getSymbol() == 'w') {
-                        Rook rk = (Rook)brd.tile[0][0].getPiece();
+                    if (brd.tile[7][0].isOccupied() &&
+                            brd.tile[0][0].getPiece().getSymbol() == 'w') {
+                        rk = (Rook)brd.tile[0][0].getPiece();
                         if (!rk.hasMoved()) {
-                            brd.tile[0][0].removePiece();
-                            brd.tile[0][3].placePiece(rk);
-                            rk.moved();
-                            moved = true;
+                            additional = true;
                             return true;
                         }
                         else return false;
@@ -130,5 +123,42 @@ public class King extends Piece {
             }
 
         }
+    }
+
+    @Override
+    public void specialMove(Point destination, Board brd) {
+        assert additional : "specialMove() wywołane gdy ruch nie jest specjalny";
+        if (color == Tile.ColorEnum.white && destination.equals(new Point(6,7))) {
+            brd.tile[7][7].removePiece();
+            brd.tile[7][5].placePiece(rk);
+            rk.moved();
+            moved = true;
+        }
+        if (color == Tile.ColorEnum.white && destination.equals(new Point(2,7))) {
+            brd.tile[7][0].removePiece();
+            brd.tile[7][3].placePiece(rk);
+            rk.moved();
+            moved = true;
+        }
+        if (color == Tile.ColorEnum.black && destination.equals(new Point(6,0))) {
+            brd.tile[0][7].removePiece();
+            brd.tile[0][5].placePiece(rk);
+            rk.moved();
+            moved = true;
+        }
+        if (color == Tile.ColorEnum.black && destination.equals(new Point(2,0))) {
+            brd.tile[0][0].removePiece();
+            brd.tile[0][3].placePiece(rk);
+            rk.moved();
+            moved = true;
+        }
+    }
+
+    boolean hasMoved() {
+        return moved;
+    }
+
+    public void moved() {
+        this.moved = true;
     }
 }

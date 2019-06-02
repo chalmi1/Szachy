@@ -34,7 +34,7 @@ public class Pawn extends Piece {
             if (destination.equals(new Point(start.x, start.y-1)) &&
                     !brd.tile[start.y-1][start.x].isOccupied()) {
                 if (destination.y == 0) {
-                    PromotionFrame frame = new PromotionFrame("Promocja", this, brd, destination);
+                    additional = true;
                 }
                 return true;    // ruch o jeden do przodu
             }
@@ -45,7 +45,7 @@ public class Pawn extends Piece {
                         !brd.tile[start.y-1][start.x].isOccupied()) {
                     enPassant = true;
                     if (destination.y == 0) {
-                        PromotionFrame frame = new PromotionFrame("Promocja", this, brd, destination);
+                        additional = true;
                     }
                     return true;    // ruch o dwa do przodu
                 }
@@ -54,22 +54,19 @@ public class Pawn extends Piece {
                 if (brd.tile[start.y-1][start.x-1].isOccupied() &&
                         brd.tile[start.y-1][start.x-1].getPiece().color != color) {
                     if (destination.y == 0) {
-                        PromotionFrame frame = new PromotionFrame("Promocja", this, brd, destination);
+                        additional = true;
                     }
                     return true;    // zwykle bicie
                 }
 
                 if (!brd.tile[start.y-1][start.x-1].isOccupied() && // bicie w przelocie
-                        brd.tile[start.y][start.x-1].getPiece() != null) {
+                        brd.tile[start.y][start.x-1].isOccupied()) {
                     Piece pc = brd.tile[start.y][start.x-1].getPiece();
                     if (pc.getSymbol() == 'p') {
                         Pawn pwn = (Pawn)pc;
                         if (pwn.enPassant)
                         {
-                            brd.tile[start.y][start.x-1].removePiece();
-                            if (destination.y == 0) {
-                                PromotionFrame frame = new PromotionFrame("Promocja", this, brd, destination);
-                            }
+                            additional = true;
                             return true;
                         }
                     }
@@ -80,22 +77,19 @@ public class Pawn extends Piece {
                 if (brd.tile[start.y-1][start.x+1].isOccupied() && // zwykle bicie
                         brd.tile[start.y-1][start.x+1].getPiece().color != color) {
                     if (destination.y == 0) {
-                        PromotionFrame frame = new PromotionFrame("Promocja", this, brd, destination);
+                        additional = true;
                     }
                     return true;
                 }
 
                 if (!brd.tile[start.y-1][start.x+1].isOccupied() && // bicie w przelocie
-                        brd.tile[start.y][start.x+1].getPiece() != null) {
+                        brd.tile[start.y][start.x+1].isOccupied()) {
                     Piece pc = brd.tile[start.y][start.x+1].getPiece();
                     if (pc.getSymbol() == 'p') {
                         Pawn pwn = (Pawn)pc;
                         if (pwn.enPassant)
                         {
-                            brd.tile[start.y][start.x+1].removePiece();
-                            if (destination.y == 0) {
-                                PromotionFrame frame = new PromotionFrame("Promocja", this, brd, destination);
-                            }
+                            additional = true;
                             return true;
                         }
                     }
@@ -106,7 +100,7 @@ public class Pawn extends Piece {
             if (destination.equals(new Point(start.x, start.y+1)) &&
                     !brd.tile[start.y+1][start.x].isOccupied()) {
                 if (destination.y == 7) {
-                    PromotionFrame frame = new PromotionFrame("Promocja", this, brd, destination);
+                    additional = true;
                 }
                 return true;    // ruch o jeden do przodu
             }
@@ -117,7 +111,7 @@ public class Pawn extends Piece {
                         !brd.tile[start.y+1][start.x].isOccupied()) {
                     enPassant = true;
                     if (destination.y == 7) {
-                        PromotionFrame frame = new PromotionFrame("Promocja", this, brd, destination);
+                        additional = true;
                     }
                     return true;    // ruch o dwa do przodu
                 }
@@ -126,22 +120,19 @@ public class Pawn extends Piece {
                 if (brd.tile[start.y+1][start.x-1].isOccupied() &&
                         brd.tile[start.y+1][start.x-1].getPiece().color != color) {
                     if (destination.y == 7) {
-                        PromotionFrame frame = new PromotionFrame("Promocja", this, brd, destination);
+                        additional = true;
                     }
                     return true;    // zwykle bicie
                 }
 
                 if (!brd.tile[start.y+1][start.x-1].isOccupied() && // bicie w przelocie
-                        brd.tile[start.y][start.x-1].getPiece() != null) {
+                        brd.tile[start.y][start.x-1].isOccupied()) {
                     Piece pc = brd.tile[start.y][start.x-1].getPiece();
                     if (pc.getSymbol() == 'P') {
                         Pawn pwn = (Pawn)pc;
                         if (pwn.enPassant)
                         {
-                            brd.tile[start.y][start.x-1].removePiece();
-                            if (destination.y == 7) {
-                                PromotionFrame frame = new PromotionFrame("Promocja", this, brd, destination);
-                            }
+                            additional = true;
                             return true;
                         }
                     }
@@ -151,22 +142,19 @@ public class Pawn extends Piece {
                 if (brd.tile[start.y+1][start.x+1].isOccupied() && // zwykle bicie
                         brd.tile[start.y+1][start.x+1].getPiece().color != color) {
                     if (destination.y == 7) {
-                        PromotionFrame frame = new PromotionFrame("Promocja", this, brd, destination);
+                        additional = true;
                     }
                     return true;
                 }
 
                 if (!brd.tile[start.y+1][start.x+1].isOccupied() && // bicie w przelocie
-                        brd.tile[start.y][start.x+1].getPiece() != null) {
+                        brd.tile[start.y][start.x+1].isOccupied()) {
                     Piece pc = brd.tile[start.y][start.x+1].getPiece();
                     if (pc.getSymbol() == 'p') {
                         Pawn pwn = (Pawn)pc;
                         if (pwn.enPassant)
                         {
-                            brd.tile[start.y][start.x+1].removePiece();
-                            if (destination.y == 7) {
-                                PromotionFrame frame = new PromotionFrame("Promocja", this, brd, destination);
-                            }
+                            additional = true;
                             return true;
                         }
                     }
@@ -194,6 +182,24 @@ public class Pawn extends Piece {
             if (brd.isInside(destination))
                 brd.tile[destination.x][destination.y].setControlled(color);
         }
+    }
+
+    @Override
+    public void specialMove(Point destination, Board brd) {
+        assert additional : "specialMove() wywołane gdy ruch nie jest specjalny";
+        if (color == Tile.ColorEnum.white && destination.y==0)
+            new PromotionFrame("Promocja", this, brd, destination);
+
+        if (color == Tile.ColorEnum.white && destination.y==2)
+            brd.tile[destination.y+1][destination.x].removePiece();
+
+        if (color == Tile.ColorEnum.black && destination.y==7)
+            new PromotionFrame("Promocja", this, brd, destination);
+
+        if (color == Tile.ColorEnum.white && destination.y==5)
+            brd.tile[destination.y+1][destination.x].removePiece();
+
+
     }
 
     public void resetEnPassant() {
