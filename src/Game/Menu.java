@@ -6,6 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 
+/**
+ * Klasa odpowiadająca za okienko Menu
+ */
 public class Menu extends JFrame implements ActionListener {
 
     private JButton PvP;

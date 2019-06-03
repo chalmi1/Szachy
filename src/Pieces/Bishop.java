@@ -11,6 +11,9 @@ import java.io.IOException;
 import static java.lang.Integer.max;
 import static java.lang.Integer.min;
 
+/**
+ * Klasa reprezentująca gońca
+ */
 public class Bishop extends Piece {
 
     public Bishop(Tile.ColorEnum c) {
@@ -80,6 +83,11 @@ public class Bishop extends Piece {
         }
     }
 
+    /**
+     * brak ruchu specjalnego u gońca
+     * @param destination punkt docelowy ruchu
+     * @param brd         szachownica
+     */
     @Override
     public void specialMove(Point destination, Board brd) {
         assert additional : "specialMove() wywołane gdy ruch nie jest specjalny";

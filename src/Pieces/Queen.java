@@ -11,6 +11,9 @@ import java.io.IOException;
 import static java.lang.Integer.max;
 import static java.lang.Integer.min;
 
+/**
+ * Klasa reprezentująca hetmana
+ */
 public class Queen extends Piece {
 
     public Queen(Tile.ColorEnum c) {
@@ -117,6 +120,11 @@ public class Queen extends Piece {
         }
     }
 
+    /**
+     * Brak ruchów specjalnych hetmanem
+     * @param destination punkt docelowy ruchu
+     * @param brd         szachownica
+     */
     @Override
     public void specialMove(Point destination, Board brd) {
         assert additional : "specialMove() wywołane gdy ruch nie jest specjalny";

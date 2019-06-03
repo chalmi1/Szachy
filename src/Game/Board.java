@@ -8,6 +8,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+/**
+ * Klasa reprezentująca szachownicę. Składa się z tablicy płytek (obiektów typu Tile)
+ */
 public class Board extends JPanel {
     public Tile[][] tile = new Tile[8][8];
     private Piece grabbedPiece = null;
@@ -17,6 +20,14 @@ public class Board extends JPanel {
     private Point LastMoveTo = null;
     private MouseAdapter mouse;
 
+    /**
+     * Konstruktor inicjalizuje planszę:
+     * 1. inicjalizuje wszystkie pola planszy (obiekty typu Tile) przypisując im koordynaty i kolor
+     * 2. ustawia ustawienie początkowe do gry w szachy (bierki na odpowiednich pozycjach)
+     * 3. definiuje słuchacza obsługującą kolejne etapy wykonania ruchu: kliknięcie na bierkę, kliknięcie na pole docelowe
+     * @param g Obiekt klasy Game reprezentujący grę która się na tej szachownicy będzie odbywać
+     *
+     */
     Board(Game g) {
         game = g;
         for (int row = 0; row < 8; row++) {
@@ -91,14 +102,19 @@ public class Board extends JPanel {
         addMouseListener(mouse);
     }
 
-    private boolean updateControlledTiles() {   // funkcja aktualizująca flagi pól kontrolowanych
-        // funkcja zwraca true lub false w zależności od tego czy wykonany wcześniej ruch był prawidłowy
-        //  pod kątem pól kontrolowanych
-        // flagi są używane aby
-        // 1. uniemożliwiać ruch króla w zaszachowane pole
-        // 2. uniemożliwić ruch bierki przypiętej absolutnie
-        //  (tak że po jej ruchu odsłonięty zostałby szach na własnym królu)
-        // 3. wymusić wyjście z szacha wykonanego przez przeciwnika
+    /**
+     * funkcja aktualizująca flagi pól kontrolowanych
+     * funkcja zwraca true lub false w zależności od tego czy wykonany wcześniej ruch był prawidłowy
+     *  pod kątem pól kontrolowanych
+     * flagi są używane aby
+     * 1. uniemożliwiać ruch króla w zaszachowane pole
+     * 2. uniemożliwić ruch bierki przypiętej absolutnie
+     *  (tak że po jej ruchu odsłonięty zostałby szach na własnym królu)
+     * 3. wymusić wyjście z szacha wykonanego przez przeciwnika
+     * @return true lub false w zależności od tego czy wykonany wcześniej ruch był prawidłowy pod kątem ewentualnego
+     * odkrywania szacha lub nie zareagowania na szach przeciwnika
+     */
+    private boolean updateControlledTiles() {
         for (int col = 0; col < 8; col++) {
             for (int row = 0; row < 8; row++) {
                 tile[row][col].resetControlled();
@@ -190,8 +206,11 @@ public class Board extends JPanel {
         return true;
     }
 
-    private void resetEnPassant() { // usuwa możliwość bicia w przelocie
-            // (funkcja powinna być wywoływana po każdej turze)
+    /**
+     * usuwa możliwość bicia w przelocie
+     * (funkcja powinna być wywoływana po każdej turze)
+     */
+    private void resetEnPassant() {
         for (int col = 0; col < 8; col++) {
             for (int row = 0; row < 8; row++) {
                 Piece piece;
@@ -212,6 +231,10 @@ public class Board extends JPanel {
         }
     }
 
+    /**
+     * funkcja rysująca planszę (przesłonięta funkcja z klasy JComponent)
+     * @param g obiekt Graphics
+     */
     public void paint(Graphics g) {
         for (int col = 0; col < 8; col++) {
             for (int row = 0; row < 8; row++) {
@@ -221,6 +244,9 @@ public class Board extends JPanel {
         }
     }
 
+    /**
+     * funkcja ustawiająca początkowe ustawienie bierek do gry w szachy
+     */
     private void populate() {
         // Wieże
         tile[0][0].placePiece(new Rook(Tile.ColorEnum.black));
@@ -262,6 +288,9 @@ public class Board extends JPanel {
         tile[6][7].placePiece(new Pawn(Tile.ColorEnum.white));
     }
 
+    /**
+     * funkcja rysująca szachownicę w formie tekstowej do konsoli
+     */
     private void ShowTextBoard() {
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
@@ -274,6 +303,10 @@ public class Board extends JPanel {
         }
     }
 
+    /**
+     * @param p współrzędne punktu kliknięcia na szachownicy w pikselach
+     * @return współrzędne punktu kliknięcia na szachownicy w indeksach tablicy płytek
+     */
     private Point getTileIndex(Point p) {
         Point index = new Point(p.x/Tile.dimension, p.y/Tile.dimension);
         if (index.x > 7)
@@ -284,11 +317,21 @@ public class Board extends JPanel {
         return index;
     }
 
+    /**
+     * @param p punkt (we współrzędnych indeksowanych) na szachownicy
+     * @return true gdy punkt znajduje się wewnątrz szachownicy
+     */
     public boolean isInside(Point p) {
         return p.x <= 7 && p.x >= 0 && p.y >= 0 && p.y <= 7;
     }
 
 
+    /**
+     * Funkcja generująca listę dozwolonych ruchów wszystkich bierek danego koloru (bez patrzenia na ewentualne
+     * odkrywanie szacha)
+     * @param color kolor bierek
+     * @return lista dozwolonych ruchów
+     */
     ArrayList<Move> generateMoveList(Tile.ColorEnum color) {
         ArrayList<Move> list = new ArrayList<Move>();
         for (int col = 0; col < 8; col++) { // pętla zbierająca wszystkie dozwolone ruchy bierek
@@ -314,6 +357,9 @@ public class Board extends JPanel {
         return list;
     }
 
+    /**
+     * @return true gdy jest szach-mat na graczu którego jest obecnie tura
+     */
     boolean isCheckmate() {
         updateControlledTiles();
         Tile.ColorEnum color;
@@ -359,10 +405,16 @@ public class Board extends JPanel {
         return true;
     }
 
+    /**
+     * funkcja zamrażająca planszę, czyli powodująca że plansza nie będzie reagować na kliknięcia myszki
+     */
     void freeze() {
         removeMouseListener(mouse);
     }
 
+    /**
+     * funkcja anulująca zamrożenie planszy
+     */
     void unfreeze() {
         addMouseListener(mouse);
     }

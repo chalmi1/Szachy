@@ -2,7 +2,10 @@ package Game;
 
 import java.awt.*;
 
-class Move { // prosta klasa przechowująca podstawowe informacje o ruchu (skąd i dokąd)
+/**
+ * prosta klasa przechowująca podstawowe informacje o ruchu (skąd i dokąd)
+ */
+class Move {
     Point from;
     Point to;
     Move(Point from, Point to) {

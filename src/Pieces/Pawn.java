@@ -9,11 +9,16 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Klasa reprezentująca pionka
+ */
 public class Pawn extends Piece {
 
+    /**
+     * zmienna warunkowa oznaczajaca mozliwosc zbicia
+     * tego pionka w przelocie (tylko po ruchu o dwa pola i tylko przez jedną turę)
+     */
     private boolean enPassant = false;
-    // zmienna warunkowa oznaczajaca mozliwosc zbicia
-    // tego pionka w przelocie (tylko po ruchu o dwa pola i tylko przez jedną turę)
 
     public Pawn(Tile.ColorEnum c) {
         super('P', c);
@@ -39,7 +44,7 @@ public class Pawn extends Piece {
                 return true;    // ruch o jeden do przodu
             }
 
-            if (start.y == 6) { // ruch z pierwszego rzędu
+            if (start.y == 6) { // ruch z drugiego rzędu
                 if (destination.equals(new Point(start.x, start.y-2)) &&
                         !brd.tile[start.y-2][start.x].isOccupied() &&
                         !brd.tile[start.y-1][start.x].isOccupied()) {
@@ -105,7 +110,7 @@ public class Pawn extends Piece {
                 return true;    // ruch o jeden do przodu
             }
 
-            if (start.y == 1) { // ruch z pierwszego rzędu
+            if (start.y == 1) { // ruch z drugiego rzędu
                 if (destination.equals(new Point(start.x, start.y+2)) &&
                         !brd.tile[start.y+2][start.x].isOccupied() &&
                         !brd.tile[start.y+1][start.x].isOccupied()) {
@@ -184,6 +189,16 @@ public class Pawn extends Piece {
         }
     }
 
+    /**
+     * Przy promowaniu pionka, funkcja tworzy okienko promocji piona.
+     * (po dojściu pionkiem na ostatni rząd, można go promować do hetmana, wieży, skoczka lub gońca)
+     * Przy biciu w przelocie, funkcja bije pionka będącego na polu za "plecami" tego pionka
+     * (Bicie w przelocie, tzw. "en passant" jest to zasada pozwalająca na zbicie pionka który ruszył się ze swojego
+     * drugiego rzędu o dwa pola tak jakby ruszył się tylko jedno pole. Bicie w przelocie jest możliwe tylko od razu
+     * po ruchu o dwa pola, w następnej turze nie będzie takiej możliwości)
+     * @param destination punkt docelowy ruchu
+     * @param brd         szachownica
+     */
     @Override
     public void specialMove(Point destination, Board brd) {
         assert additional : "specialMove() wywołane gdy ruch nie jest specjalny";
@@ -202,6 +217,9 @@ public class Pawn extends Piece {
 
     }
 
+    /**
+     * funkcja anulująca możliwość zbicia tego pionka w przelocie
+     */
     public void resetEnPassant() {
         enPassant = false;
     }

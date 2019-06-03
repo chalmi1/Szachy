@@ -1,5 +1,8 @@
 package Game;
 
+/**
+ * Klasa reprezentująca gracza w grze (czarny lub biały)
+ */
 class Player {
 
 

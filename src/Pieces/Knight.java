@@ -8,6 +8,9 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Klasa reprezentująca skoczka
+ */
 public class Knight extends Piece{
 
     public Knight(Tile.ColorEnum c) {
@@ -74,6 +77,11 @@ public class Knight extends Piece{
             brd.tile[destination.x][destination.y].setControlled(color);
     }
 
+    /**
+     * Brak ruchów specjalnych skoczka
+     * @param destination punkt docelowy ruchu
+     * @param brd         szachownica
+     */
     @Override
     public void specialMove(Point destination, Board brd) {
         assert additional : "specialMove() wywołane gdy ruch nie jest specjalny";

@@ -3,6 +3,9 @@ package Game;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Klasa odpowiadająca za okienko dla szachownicy
+ */
 class MyFrame extends JFrame {
     MyFrame(String name, Board board) {
         super(name);

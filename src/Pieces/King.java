@@ -8,8 +8,17 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Klasa reprezentująca króla
+ */
 public class King extends Piece {
+    /**
+     * flaga oznaczająca czy ten król poruszył się wczześniej w tej grze (ma to znaczenie przy ewentualnej roszadzie)
+     */
     private boolean moved = false;
+    /**
+     * wieża z którą król robi roszadę
+     */
     private Rook rk;
 
     public King(Tile.ColorEnum c) {
@@ -125,6 +134,14 @@ public class King extends Piece {
         }
     }
 
+    /**
+     * Przy roszadzie królem, funkcja odpowiada za przerzucenie wieży na drugą stronę króla, przeciwnie do ruchu króla
+     * (Roszada to ruch przesuwający króla o dwa pola w lewo/prawo i ustawiający wieżę z którą król roszuje w polu
+     * sąsiadującym z nim bliższym środkowi planszy
+     * Roszadę można wykonać tylko wtedy, gdy król i wieża w danej grze nie wykonały wcześniej żadnego ruchu)
+     * @param destination punkt docelowy ruchu
+     * @param brd         szachownica
+     */
     @Override
     public void specialMove(Point destination, Board brd) {
         assert additional : "specialMove() wywołane gdy ruch nie jest specjalny";

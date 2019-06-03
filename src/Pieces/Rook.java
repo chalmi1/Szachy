@@ -11,8 +11,14 @@ import java.io.IOException;
 import static java.lang.Integer.max;
 import static java.lang.Integer.min;
 
+/**
+ * Klasa reprezentująca wieżę
+ */
 public class Rook extends Piece {
 
+    /**
+     * Flaga oznaczająca czy ta wieża poruszyła się w tej grze (ma to znaczenie przy ewentualnej roszadzie)
+     */
     private boolean moved = false;
     public Rook(Tile.ColorEnum c) {
         super('W', c);
@@ -82,6 +88,11 @@ public class Rook extends Piece {
         }
     }
 
+    /**
+     * Brak ruchów specjalnych wieżą (roszadę wykonuje się ruszając królem o dwa pola)
+     * @param destination punkt docelowy ruchu
+     * @param brd         szachownica
+     */
     @Override
     public void specialMove(Point destination, Board brd) {
         assert additional : "specialMove() wywołane gdy ruch nie jest specjalny";

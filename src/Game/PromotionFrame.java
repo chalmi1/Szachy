@@ -8,6 +8,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 
+/**
+ * Klasa odpowiadająca za okienko promocji piona. Okienko to jest zawsze na wierzchu i jest niezamykalne
+ */
 public class PromotionFrame extends JFrame implements ActionListener {
     private JButton queen;
     private JButton rook;

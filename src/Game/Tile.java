@@ -4,11 +4,20 @@ import Pieces.Piece;
 
 import java.awt.*;
 
+/**
+ * Klasa reprezentująca pojedyncze pole na szachownicy
+ */
 public class Tile {
 
-    private String ChCoords;  // koordynaty szachowe np a5, b3 itd.
-    private Point IntCoords = new Point();    // koordynaty tablicowe
-    public final static int dimension = 75;   // wymiar boku kazdego pola
+    /**
+     * koordynaty szachowe np a5, b3 itd.
+     */
+    private String ChCoords;  //
+    /**
+     * koordynaty tablicowe
+     */
+    private Point IntCoords = new Point();
+    public final static int dimension = 75;
     private static Point boardOffset = new Point();
     private static Point fontOffsetV = new Point();
     private static Point fontOffsetH = new Point();
@@ -66,6 +75,9 @@ public class Tile {
         }
     }
 
+    /**
+     * Funkcja konwertująca koordynaty szachowe (a5, b6 itp.) na tablicowe
+     */
     private void convertPosToIndexed() {
         char chx = ChCoords.charAt(0);
         int x = (int)chx - (int)'a';
@@ -76,6 +88,9 @@ public class Tile {
         IntCoords.y = y;
     }
 
+    /**
+     * @param tileColorEnum kolor płytki (czarny, biały, czarny zaznaczony, biały zaznaczony)
+     */
     private void changeColor(ColorEnum tileColorEnum) {
         color = tileColorEnum;
         switch (tileColorEnum) {
@@ -95,16 +110,26 @@ public class Tile {
 
     }
 
+    /**
+     * funkcja umieszczająca bierkę na tym polu
+     * @param piece bierka
+     */
     public void placePiece(Pieces.Piece piece) {
         this.piece = piece;
         occupied = true;
     }
 
+    /**
+     * funkcja usuwająca bierkę z tego pola
+     */
     public void removePiece() {
         this.piece = null;
         occupied = false;
     }
 
+    /**
+     * funkcja podświetlająca/gasząca pole
+     */
     void click() {
         switch (color)
         {
@@ -123,6 +148,11 @@ public class Tile {
         }
     }
 
+    /**
+     * Funkcja obsługująca pierwsze kliknięcie w turze. Musi być to kliknięcie gracza w bierkę własnego koloru.
+     * @param game gra która się toczy na tej szachownicy
+     * @return true gdy kliknięto w bierkę własnego koloru
+     */
     boolean firstClick(Game game) {
         if (game.getTurn().getColor()==Player.Color.white)
         {
@@ -147,6 +177,13 @@ public class Tile {
         return false;
     }
 
+    /**
+     * Funkcja obsługująca drugie kliknięcie w turze. Sprawdzana jest poprawność wykonanego ruchu.
+     * @param grabbedPiece bierka chwycona w pierwszym kliknięciu
+     * @param beginning koordynaty tablicowe pierwszego kliknięcia
+     * @param brd plansza na której toczy się rozgrywka
+     * @return true gdy ruch jest prawidłowy
+     */
     boolean secondClick(Piece grabbedPiece, Point beginning, Board brd) {
         grabbedPiece.additional = false;
         if (grabbedPiece.isLegal(beginning, IntCoords, brd)) {
@@ -171,14 +208,10 @@ public class Tile {
         return piece;
     }
 
-    String getChCoords() {
-        return ChCoords;
-    }
-
-    public Point getIntCoords() {
-        return IntCoords;
-    }
-
+    /**
+     * @param color kolor
+     * @return true gdy pole jest kontrolowane przez dowolną bierkę danego koloru (bierka "widzi" to pole)
+     */
     public boolean getControlled(ColorEnum color) {
         if (color == ColorEnum.white)
         return whiteControlled;
@@ -186,6 +219,10 @@ public class Tile {
             return blackControlled;
     }
 
+    /**
+     * Funkcja ustawia kontrolę tego pola przez dany kolor na true
+     * @param color kolor
+     */
     public void setControlled(ColorEnum color) {
         if (color == ColorEnum.white)
             whiteControlled = true;
@@ -193,6 +230,9 @@ public class Tile {
             blackControlled = true;
     }
 
+    /**
+     * Funkcja resetująca obie flagi kontroli
+     */
     void resetControlled() {
         whiteControlled = blackControlled = false;
     }
