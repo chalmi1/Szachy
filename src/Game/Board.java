@@ -85,6 +85,8 @@ public class Board extends JPanel {
                                 tile[firstClickCoords.y][firstClickCoords.x].placePiece(grabbedPiece);
                                 if (backup != null)
                                 tile[coords.y][coords.x].placePiece(backup);
+                                else
+                                    tile[coords.y][coords.x].removePiece();
                             }
 
                         }
