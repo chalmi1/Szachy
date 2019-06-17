@@ -51,54 +51,74 @@ public class Board extends JPanel {
             @Override
             public void mouseReleased(MouseEvent e) {
                 Point coords2 = getTileIndex(e.getPoint());
-                if (coords.equals(coords2)) { // kursor nie opuscil pola
-                    if (game.getTurnProgress() == 0 &&
-                            tile[coords.y][coords.x].firstClick(game)) {
-                        game.notifyClick(1);
-                        grabbedPiece = tile[coords.y][coords.x].getPiece();
-                        firstClickCoords = coords;
-                        repaint();
-                    }
-                    else if (game.getTurnProgress() == 1) {
-                        if (tile[coords.y][coords.x].secondClick(grabbedPiece, firstClickCoords, game.getBrd())) {
-                            tile[firstClickCoords.y][firstClickCoords.x].removePiece();
-                            Piece backup = null;
-                            if (tile[coords.y][coords.x].isOccupied())
-                            backup = tile[coords.y][coords.x].getPiece();
-                            tile[coords.y][coords.x].placePiece(grabbedPiece);
+                int button = e.getButton();
+                if (button == 1) {
+                    if (coords.equals(coords2)) { // kursor nie opuscil pola
+                        if (game.getTurnProgress() == 0 &&
+                                tile[coords.y][coords.x].firstClick(game)) {
+                            game.notifyClick(1);
+                            grabbedPiece = tile[coords.y][coords.x].getPiece();
+                            firstClickCoords = coords;
+                            repaint();
+                        }
+                        else if (game.getTurnProgress() == 1) {
+                            if (tile[coords.y][coords.x].secondClick(grabbedPiece, firstClickCoords, game.getBrd())) {
+                                tile[firstClickCoords.y][firstClickCoords.x].removePiece();
+                                Piece backup = null;
+                                if (tile[coords.y][coords.x].isOccupied())
+                                    backup = tile[coords.y][coords.x].getPiece();
+                                tile[coords.y][coords.x].placePiece(grabbedPiece);
 
-                            if (updateControlledTiles() && !game.getTurn().isInCheck()) {  // jesli ruch byl dozwolony
-                                tile[coords.y][coords.x].click();
-                                if (LastMoveFrom != null)   // jesli byl poprzedni ruch to go podswietl
-                                    tile[LastMoveFrom.y][LastMoveFrom.x].click();
-                                LastMoveFrom = firstClickCoords;
-                                if (LastMoveTo != null)     // jesli byl poprzedni ruch to go podswietl
-                                    tile[LastMoveTo.y][LastMoveTo.x].click();
-                                LastMoveTo = coords;
-                                grabbedPiece = null;
-                                firstClickCoords = null;
-                                game.notifyClick(2);
-                                resetEnPassant();
-                                repaint();
+                                if (updateControlledTiles() && !game.getTurn().isInCheck()) {  // jesli ruch byl dozwolony
+                                    tile[coords.y][coords.x].click();
+                                    if (LastMoveFrom != null)   // jesli byl poprzedni ruch to go podswietl
+                                        tile[LastMoveFrom.y][LastMoveFrom.x].click();
+                                    LastMoveFrom = firstClickCoords;
+                                    if (LastMoveTo != null)     // jesli byl poprzedni ruch to go podswietl
+                                        tile[LastMoveTo.y][LastMoveTo.x].click();
+                                    LastMoveTo = coords;
+                                    grabbedPiece = null;
+                                    firstClickCoords = null;
+                                    game.notifyClick(2);
+                                    resetEnPassant();
+                                    repaint();
+                                }
+                                else {
+                                    tile[firstClickCoords.y][firstClickCoords.x].placePiece(grabbedPiece);
+                                    if (backup != null)
+                                        tile[coords.y][coords.x].placePiece(backup);
+                                    else
+                                        tile[coords.y][coords.x].removePiece();
+                                }
+
                             }
                             else {
-                                tile[firstClickCoords.y][firstClickCoords.x].placePiece(grabbedPiece);
-                                if (backup != null)
-                                tile[coords.y][coords.x].placePiece(backup);
-                                else
-                                    tile[coords.y][coords.x].removePiece();
+                                tile[firstClickCoords.y][firstClickCoords.x].click();
+                                grabbedPiece = null;
+                                firstClickCoords = null;
+                                game.undoClick();
+                                repaint();
                             }
-
-                        }
-                        else {
-                            tile[firstClickCoords.y][firstClickCoords.x].click();
-                            grabbedPiece = null;
-                            firstClickCoords = null;
-                            game.undoClick();
-                            repaint();
                         }
                     }
                 }
+                /*else if (button == 3) {
+                    Piece pc;
+                    if (coords.equals(coords2)) { // kursor nie opuscil pola
+                        if (tile[coords.y][coords.x].isOccupied()) {
+                            pc = tile[coords.y][coords.x].getPiece();
+                            ArrayList<Move> list = generateMoveList(pc);
+                            for (Move i : list) {
+                                if (!tile[i.to.y][i.to.x].dotted)
+                                tile[i.to.y][i.to.x].dotted = true;
+                                else tile[i.to.y][i.to.x].dotted = false;
+
+                            }
+                            repaint();
+                        }
+                    }
+                }*/
+
             }
         };
         addMouseListener(mouse);
@@ -358,6 +378,34 @@ public class Board extends JPanel {
         }
         return list;
     }
+
+    ArrayList<Move> generateMoveList(Piece pc) {
+        ArrayList<Move> list = new ArrayList<Move>();
+        for (int col = 0; col < 8; col++) { // pętla zbierająca wszystkie dozwolone ruchy bierek
+            for (int row = 0; row < 8; row++) {
+                Piece piece;
+                if (tile[row][col].isOccupied()) {
+                    piece = tile[row][col].getPiece();
+                    if (piece != pc)
+                        continue;
+                }
+                else
+                    continue;
+
+                for (int x = 0; x < 8; x++) { // pętla zbierająca wszystkie dozwolone ruchy bierek
+                    for (int y = 0; y < 8; y++) {
+                        Move move = new Move(new Point(col, row), new Point(x,y));
+                        if (piece.isLegal(move.from, move.to, this)) {
+                            list.add(move);
+                        }
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
+
 
     /**
      * @return true gdy jest szach-mat na graczu którego jest obecnie tura

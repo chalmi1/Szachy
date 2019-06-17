@@ -2,7 +2,10 @@ package Game;
 
 import Pieces.Piece;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Klasa reprezentująca pojedyncze pole na szachownicy
@@ -29,6 +32,9 @@ public class Tile {
     private boolean blackControlled = false;
     private boolean whiteControlled = false;
     private Pieces.Piece piece = null;
+    private boolean dotted = false;
+    private File dotfile = new File("src/img/kropka.png");
+    private static Image dotimage;
 
     Tile(String coords, ColorEnum color) {
         changeColor(color);
@@ -40,6 +46,11 @@ public class Tile {
         fontOffsetV.y = 15;
         fontOffsetH.x = dimension - 10;
         fontOffsetH.y = dimension - 5;
+        try {
+            dotimage = ImageIO.read(dotfile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     public boolean isOccupied() { return occupied; }
 
@@ -72,6 +83,10 @@ public class Tile {
         if (piece != null) {
             Point offset = piece.getTileOffset();
             piece.draw(g, x + offset.x, y + offset.y);
+        }
+
+        if (dotted) {
+            g.drawImage(dotimage, x+7,y+7, null);
         }
     }
 
